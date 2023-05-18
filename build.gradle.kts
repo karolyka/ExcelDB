@@ -10,7 +10,7 @@ plugins {
     jacoco
 }
 
-group = "hu.chas"
+group = "hu.chas.exceldb"
 version = "0.1"
 
 repositories {
@@ -18,8 +18,18 @@ repositories {
 }
 
 dependencies {
-    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:$detektVersion")
+    api("org.apache.poi:poi-ooxml:5.2.3")
+
+    implementation("org.apache.logging.log4j:log4j-core:2.20.0")
+    implementation("org.slf4j:slf4j-simple:2.0.7")
+    implementation("ch.qos.logback:logback-classic:1.2.11")
+    implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
+
+    implementation(kotlin("reflect"))
+
     testImplementation(kotlin("test"))
+
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:$detektVersion")
 }
 
 tasks {
