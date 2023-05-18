@@ -14,8 +14,9 @@ class SheetIterator<T : Entity>(private val sheetReference: SheetReference<T>) :
     }
 
     override fun next(): T {
-        if (hasNext().not())
+        if (hasNext().not()) {
             throw NoSuchElementException()
+        }
         val row = sheetReference.sheet.getRow(++rowIndex) ?: throw RowNotFoundException(rowIndex)
         return sheetReference.getEntity(row)
     }

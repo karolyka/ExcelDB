@@ -43,11 +43,12 @@ class ExcelDB(private val fileName: String) {
      * @param sheetName Use this name for data when provided
      * */
     fun <T : Entity> getIterator(kClass: KClass<T>, sheetName: String? = null): Iterator<T> {
-        return (sheetName
-            ?: kClass.findAnnotation<Sheet>()?.name?.takeIf { it.isNotBlank() }
-            ?: kClass.simpleName.toString())
+        return (
+            sheetName
+                ?: kClass.findAnnotation<Sheet>()?.name?.takeIf { it.isNotBlank() }
+                ?: kClass.simpleName.toString()
+            )
             .let { workbook.getSheet(it) ?: throw SheetNotFoundException(it) }
             .let { SheetIterator(SheetReference(kClass, sheet = it)) }
     }
-
 }

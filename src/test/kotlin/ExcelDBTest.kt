@@ -18,5 +18,4 @@ class ExcelDBTest {
             ExcelDB(TEST_WORKBOOK)
         }
     }
-
 }

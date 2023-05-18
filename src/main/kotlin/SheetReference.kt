@@ -41,16 +41,20 @@ class SheetReference<T : Entity>(kClass: KClass<T>, val sheet: Sheet) {
         kParameter: KParameter
     ) {
         if (cells.size > 1) throw NonUniqueColumnException(cells.joinToString { it.first })
-        if (cells.isEmpty() && kParameter.isOptional.not())
+        if (cells.isEmpty() && kParameter.isOptional.not()) {
             throw ColumnNotFoundException(kParameter.columnName.toString())
+        }
     }
 
     fun getEntity(row: Row): T {
         return primaryConstructor.callBy(
             fields.mapNotNull {
                 val cellValue = row.getCell(it.columnIndex!!)?.let { cell -> it.getValue(cell) }
-                if (cellValue != null || it.kParameter.isRequired) it.kParameter to cellValue
-                else null
+                if (cellValue != null || it.kParameter.isRequired) {
+                    it.kParameter to cellValue
+                } else {
+                    null
+                }
             }.toMap()
         )
     }
@@ -69,7 +73,6 @@ class SheetReference<T : Entity>(kClass: KClass<T>, val sheet: Sheet) {
             it.equals(columnName, true) || it.stripFieldName().equals(columnName, true)
         }
 
-
     private fun String.stripFieldName(): String {
         return this.lowercase().map {
             when (it) {
@@ -85,5 +88,4 @@ class SheetReference<T : Entity>(kClass: KClass<T>, val sheet: Sheet) {
             }
         }.joinToString("")
     }
-
 }

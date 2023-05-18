@@ -25,16 +25,18 @@ fun Cell.asString(): String? {
 
 /** A property for cell, it contains the [Cell.getStringCellValue] as [String]? */
 val Cell.stringValue: String?
-    get() = (try {
-        this.stringCellValue
-    } catch (e: Exception) { // TODO
-        (this as XSSFCell).rawValue
-    })?.trim()
+    get() = (
+        try {
+            this.stringCellValue
+        } catch (e: Exception) { // TODO
+            (this as XSSFCell).rawValue
+        }
+        )?.trim()
 
 /** Get a value of the [Cell] as [Int]? */
 internal fun Cell.intCellValue() = this.asString()?.toDouble()?.toInt()
 
-//fun Cell.asString1(): String =
+// fun Cell.asString1(): String =
 //    try {
 //        return when (cellType()) {
 //            CellType.NUMERIC -> this.numericCellValue.toString()
