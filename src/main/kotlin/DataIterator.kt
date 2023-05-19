@@ -5,7 +5,7 @@ import extensions.asString
  * This class implements the [Iterator] for [Entity] class and the related Excel Sheet
  *
  * @property sheetReference
- * */
+ */
 class DataIterator<T : Entity>(private val sheetReference: SheetReference<T>) : Iterator<T> {
     private var rowIndex = sheetReference.columnNameRowIndex
     override fun hasNext(): Boolean {

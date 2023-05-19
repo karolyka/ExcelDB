@@ -8,7 +8,7 @@ package exceptions
  *                                       and indicates that the cause is nonexistent or unknown.)
  * @param enableSuppression  whether suppression is enabled or disabled
  * @param writableStackTrace whether the stack trace should be writable
- * */
+ */
 open class GeneralExcelException(
     message: String? = null,
     cause: Throwable? = null,
