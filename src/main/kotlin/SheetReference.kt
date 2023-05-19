@@ -18,7 +18,7 @@ import kotlin.reflect.full.primaryConstructor
  *
  * @param kClass [KClass] of [Entity]
  * @property sheet  An Excel [Sheet] that contains data
- * */
+ */
 class SheetReference<T : Entity>(kClass: KClass<T>, val sheet: Sheet) {
     val columnNameRowIndex: Int = kClass.findAnnotation<annotations.Sheet>()?.firstRowIndex ?: 0
     private val primaryConstructor = kClass.primaryConstructor ?: throw PrimaryConstructorMissing(kClass.simpleName)
@@ -42,7 +42,7 @@ class SheetReference<T : Entity>(kClass: KClass<T>, val sheet: Sheet) {
     /**
      * Get a new [T] instance based on the data contained in the [Row]
      * @param row A [Row] from an Excel Sheet
-     * */
+     */
     fun getEntity(row: Row): T {
         return primaryConstructor.callBy(
             mappedFields.mapNotNull {
