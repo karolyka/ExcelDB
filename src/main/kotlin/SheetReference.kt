@@ -16,7 +16,7 @@ import kotlin.reflect.full.primaryConstructor
 /**
  * This class stores the references for connect the [Entity] fields and the Excel columns
  *
- * @param    kClass [KClass] of [Entity]
+ * @param kClass [KClass] of [Entity]
  * @property sheet  An Excel [Sheet] that contains data
  * */
 class SheetReference<T : Entity>(kClass: KClass<T>, val sheet: Sheet) {
@@ -67,9 +67,9 @@ class SheetReference<T : Entity>(kClass: KClass<T>, val sheet: Sheet) {
     }
 
     private val KParameter.fieldName: String
-        get() = (findAnnotation<Column>()?.name
+        get() = findAnnotation<Column>()?.name
             ?: name
-            ?: throw UnsupportedParameterException())
+            ?: throw UnsupportedParameterException()
 
     private val KParameter.isRequired: Boolean
         get() = !isOptional
@@ -82,8 +82,8 @@ class SheetReference<T : Entity>(kClass: KClass<T>, val sheet: Sheet) {
     private class FieldName(val name: String) {
         private val normalizedName by lazy { name.normalizeFieldName() }
         fun isEqual(fieldName: String): Boolean =
-            name.equals(fieldName, true)
-                    || normalizedName.equals(fieldName, true)
+            name.equals(fieldName, true) ||
+                normalizedName.equals(fieldName, true)
     }
 }
 
