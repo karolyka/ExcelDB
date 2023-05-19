@@ -6,7 +6,7 @@ import extensions.asString
  *
  * @property sheetReference
  * */
-class SheetIterator<T : Entity>(private val sheetReference: SheetReference<T>) : Iterator<T> {
+class DataIterator<T : Entity>(private val sheetReference: SheetReference<T>) : Iterator<T> {
     private var rowIndex = sheetReference.columnNameRowIndex
     override fun hasNext(): Boolean {
         return sheetReference.sheet.getRow(rowIndex + 1)?.getCell(1)?.asString()

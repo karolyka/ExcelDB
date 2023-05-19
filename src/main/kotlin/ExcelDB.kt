@@ -49,6 +49,6 @@ class ExcelDB(private val fileName: String) {
                 ?: kClass.simpleName.toString()
             )
             .let { workbook.getSheet(it) ?: throw SheetNotFoundException(it) }
-            .let { SheetIterator(SheetReference(kClass, sheet = it)) }
+            .let { DataIterator(SheetReference(kClass, sheet = it)) }
     }
 }

@@ -3,6 +3,7 @@ import exceptions.ColumnNotFoundException
 import exceptions.NonUniqueColumnException
 import exceptions.PrimaryConstructorMissing
 import exceptions.RowNotFoundException
+import exceptions.UnsupportedParameterException
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.Row
 import org.apache.poi.ss.usermodel.Sheet
@@ -15,8 +16,8 @@ import kotlin.reflect.full.primaryConstructor
 /**
  * This class stores the references for connect the [Entity] fields and the Excel columns
  *
- * @param kClass [KClass] of [Entity]
- * @param sheet  An Excel sheet that contains data
+ * @param    kClass [KClass] of [Entity]
+ * @property sheet  An Excel [Sheet] that contains data
  * */
 class SheetReference<T : Entity>(kClass: KClass<T>, val sheet: Sheet) {
     val columnNameRowIndex: Int = kClass.findAnnotation<annotations.Sheet>()?.firstRowIndex ?: 0
@@ -25,27 +26,23 @@ class SheetReference<T : Entity>(kClass: KClass<T>, val sheet: Sheet) {
     private val mappedFields: List<ParameterMapper>
 
     init {
-        val parameters = primaryConstructor.parameters
-        val fieldNamesRow = sheet.getRow(columnNameRowIndex)?.map { it.stringCellValue.stripFieldName() to it }
+        val fieldNamesRow = sheet.getRow(columnNameRowIndex)
+            ?.map { FieldMap(it.stringCellValue.normalizeFieldName(), it) }
             ?: throw RowNotFoundException(columnNameRowIndex)
-        fields = parameters.map { kParameter ->
-            val cells = fieldNamesRow.filter { isColumn(kParameter, it.first) }
+        fields = primaryConstructor.parameters.map { kParameter ->
+            val cells = FieldName(kParameter.fieldName).let { fieldName ->
+                fieldNamesRow.filter { fieldName.isEqual(it.fieldName) }
+            }
             validateCells(cells, kParameter)
-            ParameterMapper(kParameter, cells.firstOrNull()?.second?.columnIndex)
+            ParameterMapper(kParameter, cells.firstOrNull()?.cell?.columnIndex)
         }
         mappedFields = fields.filter { it.columnIndex != null }
     }
 
-    private fun validateCells(
-        cells: List<Pair<String, Cell>>,
-        kParameter: KParameter
-    ) {
-        if (cells.size > 1) throw NonUniqueColumnException(cells.joinToString { it.first })
-        if (cells.isEmpty() && kParameter.isOptional.not()) {
-            throw ColumnNotFoundException(kParameter.columnName.toString())
-        }
-    }
-
+    /**
+     * Get a new [T] instance based on the data contained in the [Row]
+     * @param row A [Row] from an Excel Sheet
+     * */
     fun getEntity(row: Row): T {
         return primaryConstructor.callBy(
             mappedFields.mapNotNull {
@@ -59,33 +56,49 @@ class SheetReference<T : Entity>(kClass: KClass<T>, val sheet: Sheet) {
         )
     }
 
+    private fun validateCells(
+        cells: List<FieldMap>,
+        kParameter: KParameter
+    ) {
+        if (cells.size > 1) throw NonUniqueColumnException(cells.joinToString { it.fieldName })
+        if (cells.isEmpty() && kParameter.isOptional.not()) {
+            throw ColumnNotFoundException(kParameter.columnName.toString())
+        }
+    }
+
+    private val KParameter.fieldName: String
+        get() = (findAnnotation<Column>()?.name
+            ?: name
+            ?: throw UnsupportedParameterException())
+
     private val KParameter.isRequired: Boolean
         get() = !isOptional
 
     private val KAnnotatedElement.columnName: String?
         get() = findAnnotation<Column>()?.name ?: (this as? KParameter)?.name
 
-    private fun isColumn(kParameter: KParameter, columnName: String) =
-        isColumn(kParameter, kParameter.name!!, columnName)
+    private class FieldMap(val fieldName: String, val cell: Cell)
 
-    private fun isColumn(kAnnotatedElement: KAnnotatedElement, name: String, columnName: String) =
-        (kAnnotatedElement.columnName ?: name).let {
-            it.equals(columnName, true) || it.stripFieldName().equals(columnName, true)
-        }
-
-    private fun String.stripFieldName(): String {
-        return this.lowercase().map {
-            when (it) {
-                in setOf('ö', 'ő', 'ó') -> 'o'
-                in setOf('ü', 'ű', 'ú') -> 'u'
-                'é' -> 'e'
-                'á' -> 'a'
-                'í' -> 'i'
-                in '0'..'9' -> it
-                in 'a'..'z' -> it
-                in setOf('_', '(', ')', '[', ']') -> '_'
-                else -> ""
-            }
-        }.joinToString("")
+    private class FieldName(val name: String) {
+        private val normalizedName by lazy { name.normalizeFieldName() }
+        fun isEqual(fieldName: String): Boolean =
+            name.equals(fieldName, true)
+                    || normalizedName.equals(fieldName, true)
     }
+}
+
+private fun String.normalizeFieldName(): String {
+    return this.lowercase().map {
+        when (it) {
+            in '0'..'9' -> it
+            in 'a'..'z' -> it
+            'é' -> 'e'
+            'á' -> 'a'
+            'í' -> 'i'
+            in "öőó" -> 'o'
+            in "üűú" -> 'u'
+            in " _()[]" -> '_'
+            else -> ""
+        }
+    }.joinToString("")
 }
