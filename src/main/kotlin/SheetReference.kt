@@ -48,7 +48,7 @@ class SheetReference<T : Entity>(kClass: KClass<T>, val sheet: Sheet) {
 
     fun getEntity(row: Row): T {
         return primaryConstructor.callBy(
-            fields.mapNotNull {
+            mappedFields.mapNotNull {
                 val cellValue = row.getCell(it.columnIndex!!)?.let { cell -> it.getValue(cell) }
                 if (cellValue != null || it.kParameter.isRequired) {
                     it.kParameter to cellValue
