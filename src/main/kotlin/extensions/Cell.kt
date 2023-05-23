@@ -3,7 +3,12 @@ package extensions
 import exceptions.UnsupportedCellTypeException
 import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.CellType
+import org.apache.poi.ss.usermodel.RichTextString
 import org.apache.poi.xssf.usermodel.XSSFCell
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.util.Calendar
+import java.util.Date
 
 private const val CELL_CONTAINS_ERROR = "#ERROR"
 
@@ -37,3 +42,19 @@ val Cell.stringValue: String?
 
 /** Get a value of the [Cell] as [Int]? */
 internal fun Cell.intCellValue() = this.asString()?.toDouble()?.toInt()
+
+/** Set a value of the [Cell] */
+fun Cell.setCellValue(value: Any?) {
+    when (value) {
+        is Boolean -> setCellValue(value)
+        is Calendar -> setCellValue(value)
+        is Date -> setCellValue(value)
+        is Double -> setCellValue(value)
+        is Int -> setCellValue(value.toDouble())
+        is LocalDate -> setCellValue(value)
+        is LocalDateTime -> setCellValue(value)
+        is RichTextString -> setCellValue(value)
+        is String -> setCellValue(value)
+        else -> throw UnsupportedCellTypeException()
+    }
+}

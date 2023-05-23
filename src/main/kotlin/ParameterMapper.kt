@@ -7,8 +7,14 @@ import java.util.Date
 import kotlin.reflect.KParameter
 import kotlin.reflect.jvm.javaType
 
-/** Parameter mapper class to stores the parameter and the Excel column relation */
+/**
+ * Parameter mapper class to stores the parameter and the Excel column relation
+ *
+ * @property kParameter  A parameter
+ * @property columnIndex Index of Excel column
+ * */
 class ParameterMapper(val kParameter: KParameter, val columnIndex: Int?) {
+    /** Get a value of cell. The type of value depends on the type of the parameter */
     val getValue: Cell.() -> Any? = when (kParameter.type.javaType) {
         Boolean::class.java -> Cell::getBooleanCellValue
         Date::class.java -> Cell::getDateCellValue

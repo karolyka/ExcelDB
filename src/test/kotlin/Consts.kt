@@ -8,7 +8,10 @@ import java.util.Date
 
 const val EMPTY_USER = "EmptyUser"
 const val MISSING = "Missing"
-const val TEST_WORKBOOK = "src/test/resources/data/TestWorkBook.xlsx"
+
+private const val TEST_WORKBOOK_BASE_PATH = "src/test/resources/data/"
+const val TEST_WORKBOOK = "${TEST_WORKBOOK_BASE_PATH}TestWorkBook.xlsx"
+const val TEST_WORKBOOK_FOR_WRITE = "${TEST_WORKBOOK_BASE_PATH}TestWorkBookW.xlsx"
 
 val USERS = listOf(
     User(1, "One"),
@@ -32,5 +35,5 @@ val SPECIAL_CHARACTERS = listOf(
     SpecialCharacters(1, "col1", "col2", "col3")
 )
 
-fun String.toDate(): Date = SimpleDateFormat("yyyy-MM-dd").parse(this)
-fun String.toDateTime(): Date = SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(this)
+private fun String.toDate(): Date = SimpleDateFormat("yyyy-MM-dd").parse(this)
+private fun String.toDateTime(): Date = SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(this)

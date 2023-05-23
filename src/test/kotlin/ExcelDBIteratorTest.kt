@@ -10,6 +10,7 @@ import domain.UserWithSheetAnnotation
 import domain.UserWithUnsupportedField
 import exceptions.ColumnNotFoundException
 import exceptions.NonUniqueColumnException
+import exceptions.RowNotFoundException
 import exceptions.SheetNotFoundException
 import exceptions.UnsupportedDataTypeException
 import org.junit.jupiter.api.assertDoesNotThrow
@@ -26,6 +27,13 @@ class ExcelDBIteratorTest {
     fun `verify iterator throws exception when the sheet doesn't exists`() {
         assertFailsWith<SheetNotFoundException> {
             excelDB.getIterator<Missing>()
+        }
+    }
+
+    @Test
+    fun `verify iterator throws exception when the sheet is empty`() {
+        assertFailsWith<RowNotFoundException> {
+            excelDB.getIterator<User>("EmptySheet")
         }
     }
 
