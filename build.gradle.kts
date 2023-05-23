@@ -22,7 +22,7 @@ dependencies {
 
     implementation("org.apache.logging.log4j:log4j-core:2.20.0")
     implementation("org.slf4j:slf4j-simple:2.0.7")
-    implementation("ch.qos.logback:logback-classic:1.2.11")
+    implementation("ch.qos.logback:logback-classic:1.4.7")
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
 
     implementation(kotlin("reflect"))
