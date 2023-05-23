@@ -4,6 +4,7 @@ import extensions.asString
 /**
  * This class implements the [Iterator] for [Entity] class and the related Excel Sheet
  *
+ * @param T  An [Entity] type
  * @property sheetReference
  */
 class DataIterator<T : Entity>(private val sheetReference: SheetReference<T>) : Iterator<T> {
