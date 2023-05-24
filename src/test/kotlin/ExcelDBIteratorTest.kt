@@ -4,6 +4,7 @@ import domain.SpecialCharacters
 import domain.User
 import domain.UserMissingColumn
 import domain.UserNonUniqueColumns
+import domain.UserWithAnnotations
 import domain.UserWithDefault
 import domain.UserWithOptional
 import domain.UserWithSheetAnnotation
@@ -148,6 +149,13 @@ class ExcelDBIteratorTest {
         val specialCharactersIterator = excelDB.getIterator<SpecialCharacters>()
         SPECIAL_CHARACTERS.forEach {
             assertEquals(it, specialCharactersIterator.next())
+        }
+    }
+
+    @Test
+    fun `verify iterator doesn't throw an exception when the column is annotated`() {
+        assertDoesNotThrow {
+            excelDB.getIterator<UserWithAnnotations>()
         }
     }
 }
