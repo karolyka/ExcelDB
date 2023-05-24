@@ -77,7 +77,7 @@ class ExcelDB(private val fileName: String, private val fileMode: FileMode = Fil
     fun <T : Entity> getIterator(kClass: KClass<T>, sheetName: String? = null): Iterator<T> {
         return getSheetName(kClass, sheetName)
             .let { workbook.getSheet(it) ?: throw SheetNotFoundException(it) }
-            .let { DataIterator(SheetReference(kClass, sheet = it)) }
+            .let { DataIterator(SheetReference(kClass, sheet = it, excelDB = this)) }
     }
 
     /**

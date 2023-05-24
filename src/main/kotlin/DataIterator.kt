@@ -1,5 +1,6 @@
-import exceptions.RowNotFoundException
 import extensions.asString
+import extensions.getCellValueAs
+import org.apache.poi.ss.usermodel.Cell
 
 /**
  * This class implements the [Iterator] for [Entity] class and the related Excel Sheet
@@ -9,16 +10,33 @@ import extensions.asString
  */
 class DataIterator<T : Entity>(private val sheetReference: SheetReference<T>) : Iterator<T> {
     private var rowIndex = sheetReference.columnNameRowIndex
-    override fun hasNext(): Boolean {
-        return sheetReference.sheet.getRow(rowIndex + 1)?.getCell(1)?.asString()
+    private val indexColumn by lazy { sheetReference.getKeyCellIndex() ?: 0 }
+    private val keyType by lazy { sheetReference.getKeyType() }
+
+    fun find(cell: Cell): T? {
+        val value = cell.getCellValueAs(keyType)
+        if (value != null) {
+            var index = sheetReference.columnNameRowIndex
+            while (hasNextRow(index)) {
+                if (value == sheetReference.getKeyCell(++index).getCellValueAs(keyType)) {
+                    return sheetReference.getEntity(index)
+                }
+            }
+        }
+        return null
+    }
+
+    private fun hasNextRow(row: Int): Boolean {
+        return sheetReference.sheet.getRow(row + 1)?.getCell(indexColumn)?.asString()
             .let { !it.isNullOrBlank() }
     }
+
+    override fun hasNext(): Boolean = hasNextRow(rowIndex)
 
     override fun next(): T {
         if (hasNext().not()) {
             throw NoSuchElementException()
         }
-        val row = sheetReference.sheet.getRow(++rowIndex) ?: throw RowNotFoundException(rowIndex)
-        return sheetReference.getEntity(row)
+        return sheetReference.getEntity(++rowIndex)
     }
 }

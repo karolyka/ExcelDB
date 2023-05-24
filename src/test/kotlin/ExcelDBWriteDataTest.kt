@@ -1,4 +1,4 @@
-import domain.User
+import domain.user.User
 import exceptions.NoDataException
 import org.junit.jupiter.api.assertDoesNotThrow
 import java.io.File

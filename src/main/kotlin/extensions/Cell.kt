@@ -9,6 +9,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.Calendar
 import java.util.Date
+import kotlin.reflect.KClass
 
 private const val CELL_CONTAINS_ERROR = "#ERROR"
 
@@ -32,12 +33,12 @@ fun Cell.asString(): String? {
 val Cell.stringValue: String?
     get() {
         return (
-            try {
-                this.stringCellValue
-            } catch (@Suppress("TooGenericExceptionCaught", "SwallowedException") e: Exception) { // TODO
-                (this as XSSFCell).rawValue
-            }
-            )?.trim()
+                try {
+                    this.stringCellValue
+                } catch (@Suppress("TooGenericExceptionCaught", "SwallowedException") e: Exception) { // TODO
+                    (this as XSSFCell).rawValue
+                }
+                )?.trim()
     }
 
 /** Get a value of the [Cell] as [Int]? */
@@ -57,4 +58,17 @@ fun Cell.setCellValue(value: Any?) {
         is String -> setCellValue(value)
         else -> throw UnsupportedCellTypeException()
     }
+}
+
+fun Cell.getCellValueAs(kClass: KClass<*>): Any? = when (kClass) {
+    Boolean::class -> booleanCellValue
+//        Calendar::class ->
+//        Date::class ->
+    Double::class -> numericCellValue
+    Int::class -> intCellValue()
+//        LocalDate::class ->
+//        LocalDateTime::kClass ->
+    RichTextString::class -> stringValue
+    String::class -> stringValue
+    else -> throw UnsupportedCellTypeException()
 }
