@@ -158,5 +158,4 @@ class ExcelDBIteratorTest {
             excelDB.getIterator<UserWithAnnotations>()
         }
     }
-
 }
