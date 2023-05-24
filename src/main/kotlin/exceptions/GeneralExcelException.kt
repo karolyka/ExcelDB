@@ -1,5 +1,7 @@
 package exceptions
 
+import mu.KotlinLogging
+
 /**
  * This common exception is the base of the other ExcelDB exceptions
  *
@@ -14,4 +16,12 @@ open class GeneralExcelException(
     cause: Throwable? = null,
     enableSuppression: Boolean = false,
     writableStackTrace: Boolean = true
-) : RuntimeException(message, cause, enableSuppression, writableStackTrace)
+) : RuntimeException(message, cause, enableSuppression, writableStackTrace) {
+    companion object {
+        private val logger = KotlinLogging.logger { }
+    }
+
+    init {
+        logger.error { message }
+    }
+}

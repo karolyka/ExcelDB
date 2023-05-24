@@ -30,6 +30,7 @@ class ExcelDB(private val fileName: String, private val fileMode: FileMode = Fil
     private val workbook: Workbook
 
     init {
+        logger.debug { "File name: [$fileName], file mode: [$fileMode]" }
         ZipSecureFile.setMinInflateRatio(0.0)
         workbook = when (fileMode) {
             FileMode.READ -> readWorkbook()
@@ -134,11 +135,13 @@ class ExcelDB(private val fileName: String, private val fileMode: FileMode = Fil
      * @param fileName An optional filename. If it is `null` the [fileName] will be used.
      * */
     fun writeExcel(fileName: String = this.fileName) {
+        logger.debug { "Write Excel workbook to [$fileName]" }
         if (workbook.numberOfSheets == 0) {
             throw NoDataException()
         }
         FileOutputStream(fileName).use {
             workbook.write(it)
+            logger.debug { "Write Excel workbook to [$fileName] is done" }
         }
     }
 
