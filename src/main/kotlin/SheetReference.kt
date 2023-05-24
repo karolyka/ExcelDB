@@ -61,7 +61,7 @@ class SheetReference<T : Entity>(kClass: KClass<T>, val sheet: Sheet) {
         cells: List<FieldMap>,
         kParameter: KParameter
     ) {
-        if (cells.size > 1) throw NonUniqueColumnException(cells.joinToString { it.fieldName })
+        if (cells.size > 1) throw NonUniqueColumnException(cells.joinToString { "${it.cell} -> ${it.fieldName}" })
         if (cells.isEmpty() && kParameter.isOptional.not()) {
             throw ColumnNotFoundException(kParameter.columnName.toString())
         }
