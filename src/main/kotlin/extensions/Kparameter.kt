@@ -13,9 +13,7 @@ import kotlin.reflect.full.findAnnotation
  * It throws an [UnsupportedParameterException] when name is `null`
  * */
 val KParameter.fieldName: String
-    get() = findAnnotation<Column>()?.name
-        ?: name
-        ?: throw UnsupportedParameterException()
+    get() = columnName ?: throw UnsupportedParameterException()
 
 /** `false` if the parameter is optional and can be omitted when making a call via [KCallable.callBy],
  * or `true` otherwise. */
@@ -24,5 +22,5 @@ val KParameter.isRequired: Boolean
 
 /** It is provided the column name of parameter by [Column] annotation or by name if the annotation doesn't exist */
 val KAnnotatedElement.columnName: String?
-    get() = findAnnotation<Column>()?.name
+    get() = findAnnotation<Column>()?.name?.takeIf { it.isNotBlank() }
         ?: (this as? KParameter)?.name

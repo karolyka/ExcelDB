@@ -1,6 +1,8 @@
 import domain.BoolAndFormula
 import domain.Missing
+import domain.NoPrimaryConstructor
 import domain.SpecialCharacters
+import domain.Unsupported
 import domain.user.User
 import domain.user.UserMissingColumn
 import domain.user.UserNonUniqueColumns
@@ -10,6 +12,7 @@ import domain.user.UserWithSheetAnnotation
 import domain.user.UserWithUnsupportedField
 import exceptions.ColumnNotFoundException
 import exceptions.NonUniqueColumnException
+import exceptions.PrimaryConstructorMissing
 import exceptions.SheetNotFoundException
 import exceptions.UnsupportedDataTypeException
 import org.junit.jupiter.api.assertDoesNotThrow
@@ -79,7 +82,7 @@ class ExcelDBGetDataTest {
     }
 
     @Test
-    fun `verify getData hasNext returns false when sheet has no data`() {
+    fun `verify getData returns empty list when sheet has no data`() {
         assertEquals(emptyList(), excelDB.getData(User::class, EMPTY_USER))
     }
 
@@ -103,5 +106,19 @@ class ExcelDBGetDataTest {
     @Test
     fun `verify to normalize the column name when it contains special character`() {
         assertEquals(SPECIAL_CHARACTERS, excelDB.getData<SpecialCharacters>())
+    }
+
+    @Test
+    fun `verify getData throws exception when a parameter type is unsupported`() {
+        assertFailsWith<UnsupportedDataTypeException> {
+            excelDB.getData<Unsupported>()
+        }
+    }
+
+    @Test
+    fun `verify getData throws exception when there is no primary constructor`() {
+        assertFailsWith<PrimaryConstructorMissing> {
+            excelDB.getData<NoPrimaryConstructor>()
+        }
     }
 }

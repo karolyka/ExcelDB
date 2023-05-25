@@ -16,8 +16,8 @@ import kotlin.reflect.jvm.javaType
  * @property columnIndex Index of Excel column
  * */
 class ParameterMapper(val kParameter: KParameter, val columnIndex: Int?) {
-    /** Get a value of cell. The type of value depends on the type of the parameter */
 
+    /** Get a value of cell. The type of value depends on the type of the parameter */
     val getValue: (Cell, ExcelDB) -> Any? = when (kParameter.type.javaType) {
         Boolean::class.java -> { cell, _ -> cell.booleanCellValue }
         Date::class.java -> { cell, _ -> cell.dateCellValue }
@@ -26,19 +26,20 @@ class ParameterMapper(val kParameter: KParameter, val columnIndex: Int?) {
         LocalDateTime::class.java -> { cell, _ -> cell.localDateTimeCellValue }
         String::class.java -> { cell, _ -> cell.asString() }
         else -> { cell, excelDb ->
-            if ((kParameter.type.classifier as KClass<*>).isSubclassOf(Entity::class)) {
-                @Suppress("UNCHECKED_CAST")
-                val kClass = kParameter.type.classifier as KClass<Entity>
-                if (iterator == null) {
-                    iterator = excelDb.getIterator(kClass)
+            (kParameter.type.classifier as KClass<*>).let { kClass ->
+                if (kClass.isSubclassOf(Entity::class)) {
+                    @Suppress("UNCHECKED_CAST")
+                    kClass as KClass<Entity>
+                    if (dataIterator == null) {
+                        dataIterator = excelDb.getIterator(kClass)
+                    }
+                    dataIterator!!.find(cell)
+                } else {
+                    throw UnsupportedDataTypeException(kParameter.name)
                 }
-                val value = (iterator as? DataIterator)?.find(cell)
-                println(value)
-                value
-            } else
-                throw UnsupportedDataTypeException(kParameter.name)
+            }
         }
     }
 
-    private var iterator: Iterator<Entity>? = null
+    private var dataIterator: DataIterator<Entity>? = null
 }

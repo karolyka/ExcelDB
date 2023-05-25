@@ -2,6 +2,7 @@ import annotations.Sheet
 import exceptions.NoDataException
 import exceptions.SheetNotFoundException
 import extensions.getPrimaryConstructor
+import extensions.iterate
 import extensions.setCellValue
 import mu.KotlinLogging
 import org.apache.poi.openxml4j.util.ZipSecureFile
@@ -58,23 +59,23 @@ class ExcelDB(private val fileName: String, private val fileMode: FileMode = Fil
     }
 
     /**
-     * Get an [Iterator] for an [Entity]
+     * Get an [DataIterator] for an [Entity]
      *
      * @param T An [Entity]
      * @param sheetName Use this name for data when provided
      */
-    inline fun <reified T : Entity> getIterator(sheetName: String? = null): Iterator<T> {
+    inline fun <reified T : Entity> getIterator(sheetName: String? = null): DataIterator<T> {
         return getIterator(T::class, sheetName)
     }
 
     /**
-     * Get an [Iterator] for an [Entity]
+     * Get an [DataIterator] for an [Entity]
      *
      * @param T An [Entity]
      * @param kClass    [KClass] of the [Entity]
      * @param sheetName Use this name for data when provided
      */
-    fun <T : Entity> getIterator(kClass: KClass<T>, sheetName: String? = null): Iterator<T> {
+    fun <T : Entity> getIterator(kClass: KClass<T>, sheetName: String? = null): DataIterator<T> {
         return getSheetName(kClass, sheetName)
             .let { workbook.getSheet(it) ?: throw SheetNotFoundException(it) }
             .let { DataIterator(SheetReference(kClass, sheet = it, excelDB = this)) }
@@ -98,11 +99,8 @@ class ExcelDB(private val fileName: String, private val fileMode: FileMode = Fil
      * @param sheetName Use this name for data when provided
      */
     fun <T : Entity> getData(kClass: KClass<T>, sheetName: String? = null): List<T> {
-        val iterator = getIterator(kClass, sheetName)
         val data = mutableListOf<T>()
-        while (iterator.hasNext()) {
-            data.add(iterator.next())
-        }
+        getIterator(kClass, sheetName).iterate { data.add(it) }
         return data
     }
 

@@ -1,3 +1,4 @@
+import exceptions.KeyNotFoundException
 import extensions.asString
 import extensions.getCellValueAs
 import org.apache.poi.ss.usermodel.Cell
@@ -13,6 +14,12 @@ class DataIterator<T : Entity>(private val sheetReference: SheetReference<T>) : 
     private val indexColumn by lazy { sheetReference.getKeyCellIndex() ?: 0 }
     private val keyType by lazy { sheetReference.getKeyType() }
 
+    /**
+     * Find a row by the given [Cell] value
+     *
+     * @param cell A [Cell]
+     * @return [T] or `null` when the row not found
+     * */
     fun find(cell: Cell): T? {
         val value = cell.getCellValueAs(keyType)
         if (value != null) {
@@ -22,6 +29,7 @@ class DataIterator<T : Entity>(private val sheetReference: SheetReference<T>) : 
                     return sheetReference.getEntity(index)
                 }
             }
+            throw KeyNotFoundException(cell.asString())
         }
         return null
     }

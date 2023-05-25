@@ -33,12 +33,12 @@ fun Cell.asString(): String? {
 val Cell.stringValue: String?
     get() {
         return (
-                try {
-                    this.stringCellValue
-                } catch (@Suppress("TooGenericExceptionCaught", "SwallowedException") e: Exception) { // TODO
-                    (this as XSSFCell).rawValue
-                }
-                )?.trim()
+            try {
+                this.stringCellValue
+            } catch (@Suppress("TooGenericExceptionCaught", "SwallowedException") e: Exception) { // TODO
+                (this as XSSFCell).rawValue
+            }
+            )?.trim()
     }
 
 /** Get a value of the [Cell] as [Int]? */
@@ -60,6 +60,10 @@ fun Cell.setCellValue(value: Any?) {
     }
 }
 
+/**
+ * Get a value of the [Cell] by the given [KClass]
+ * @param kClass [KClass]
+ * */
 fun Cell.getCellValueAs(kClass: KClass<*>): Any? = when (kClass) {
     Boolean::class -> booleanCellValue
 //        Calendar::class ->

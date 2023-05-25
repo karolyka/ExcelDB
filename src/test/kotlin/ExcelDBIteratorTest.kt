@@ -1,6 +1,8 @@
 import domain.BoolAndFormula
 import domain.Missing
+import domain.NoPrimaryConstructor
 import domain.SpecialCharacters
+import domain.Unsupported
 import domain.user.User
 import domain.user.UserMissingColumn
 import domain.user.UserNonUniqueColumns
@@ -11,6 +13,7 @@ import domain.user.UserWithSheetAnnotation
 import domain.user.UserWithUnsupportedField
 import exceptions.ColumnNotFoundException
 import exceptions.NonUniqueColumnException
+import exceptions.PrimaryConstructorMissing
 import exceptions.RowNotFoundException
 import exceptions.SheetNotFoundException
 import exceptions.UnsupportedDataTypeException
@@ -156,6 +159,20 @@ class ExcelDBIteratorTest {
     fun `verify iterator doesn't throw an exception when the column is annotated`() {
         assertDoesNotThrow {
             excelDB.getIterator<UserWithAnnotations>()
+        }
+    }
+
+    @Test
+    fun `verify iterator next throws exception when a parameter type is unsupported`() {
+        assertFailsWith<UnsupportedDataTypeException> {
+            excelDB.getIterator<Unsupported>().next()
+        }
+    }
+
+    @Test
+    fun `verify iterator next throws exception when there is no primary constructor`() {
+        assertFailsWith<PrimaryConstructorMissing> {
+            excelDB.getIterator<NoPrimaryConstructor>().next()
         }
     }
 }
