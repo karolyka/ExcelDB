@@ -1,5 +1,6 @@
 import domain.user.User
 import exceptions.NoDataException
+import extensions.getData
 import org.junit.jupiter.api.assertDoesNotThrow
 import java.io.File
 import java.io.FileNotFoundException
@@ -35,15 +36,15 @@ class ExcelDBWriteDataTest {
     @Test
     fun `verify writeData thrown an exception when there is no data`() {
         assertFailsWith<NoDataException> {
-            excelDB.writeExcel()
+            excelDB.writeWorkbook()
         }
     }
 
     @Test
     fun `verify writeData saves all records`() {
         assertDoesNotThrow {
-            excelDB.writeData(User::class, USERS)
-            excelDB.writeExcel()
+            excelDB.writeDataToWorkbook(User::class, USERS)
+            excelDB.writeWorkbook()
 
             assertTrue { File(TEST_WORKBOOK_FOR_WRITE).exists() }
             assertEquals(USERS, ExcelDB(TEST_WORKBOOK_FOR_WRITE).getData<User>())
@@ -54,8 +55,8 @@ class ExcelDBWriteDataTest {
     fun `verify writeData thrown an exception when filename is invalid`() {
         assertFailsWith<FileNotFoundException> {
             ExcelDB("@/invalid file name", FileMode.CREATE).run {
-                writeData(User::class, USERS)
-                writeExcel()
+                writeDataToWorkbook(User::class, USERS)
+                writeWorkbook()
             }
         }
     }
@@ -64,8 +65,8 @@ class ExcelDBWriteDataTest {
     fun `verify writeData doesn't throw with read or create filemode`() {
         assertDoesNotThrow {
             ExcelDB(TEST_WORKBOOK_FOR_WRITE, FileMode.READ_OR_CREATE).run {
-                writeData(User::class, USERS)
-                writeExcel()
+                writeDataToWorkbook(User::class, USERS)
+                writeWorkbook()
 
                 assertTrue { File(TEST_WORKBOOK_FOR_WRITE).exists() }
                 assertEquals(USERS, ExcelDB(TEST_WORKBOOK_FOR_WRITE, FileMode.READ_OR_CREATE).getData<User>())
@@ -78,12 +79,12 @@ class ExcelDBWriteDataTest {
         assertDoesNotThrow {
             val testUsers = USERS + listOf(User(100, "Hundred"))
 
-            excelDB.writeData(User::class, USERS)
-            excelDB.writeExcel()
+            excelDB.writeDataToWorkbook(User::class, USERS)
+            excelDB.writeWorkbook()
 
             ExcelDB(TEST_WORKBOOK_FOR_WRITE, FileMode.READ_OR_CREATE).run {
-                writeData(User::class, testUsers)
-                writeExcel()
+                writeDataToWorkbook(User::class, testUsers)
+                writeWorkbook()
 
                 assertTrue { File(TEST_WORKBOOK_FOR_WRITE).exists() }
                 assertEquals(testUsers, ExcelDB(TEST_WORKBOOK_FOR_WRITE, FileMode.READ_OR_CREATE).getData<User>())

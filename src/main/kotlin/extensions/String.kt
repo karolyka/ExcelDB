@@ -1,4 +1,5 @@
 package extensions
+
 internal fun String.normalizeFieldName(): String {
     return this.lowercase().map {
         when (it) {

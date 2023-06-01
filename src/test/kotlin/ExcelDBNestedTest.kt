@@ -9,11 +9,16 @@ import exceptions.MultipleKeyColumnException
 import exceptions.NoKeyFieldException
 import exceptions.NullValueException
 import exceptions.UnsupportedCellTypeException
-import extensions.iterate
+import extensions.getData
+import extensions.writeDataToWorkbook
 import org.junit.jupiter.api.assertDoesNotThrow
+import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertTrue
+
+private const val SHEET_NAME = "CarSheet"
 
 class ExcelDBNestedTest {
     companion object {
@@ -37,23 +42,6 @@ class ExcelDBNestedTest {
     private val excelDB: ExcelDB = ExcelDB(TEST_WORKBOOK)
 
     @Test
-    fun `verify iterator doesn't throw an exception with nested class`() {
-        assertDoesNotThrow {
-            excelDB.getIterator<Car>()
-        }
-    }
-
-    @Test
-    fun `verify iterator can read with nested class`() {
-        assertDoesNotThrow {
-            val carIterator = excelDB.getIterator<Car>()
-            CARS.forEach {
-                assertEquals(it, carIterator.next())
-            }
-        }
-    }
-
-    @Test
     fun `verify getData can read with nested class`() {
         assertDoesNotThrow {
             assertEquals(CARS, excelDB.getData<Car>())
@@ -68,23 +56,9 @@ class ExcelDBNestedTest {
     }
 
     @Test
-    fun `verify iterator throw an exception with nested class when related data does not exists`() {
-        assertFailsWith<KeyNotFoundException> {
-            excelDB.getIterator<Car>("CarNotValidFactory").iterate()
-        }
-    }
-
-    @Test
     fun `verify getData throw an exception with nested class when related data does not exists`() {
         assertFailsWith<KeyNotFoundException> {
             excelDB.getData<Car>("CarNotValidFactory")
-        }
-    }
-
-    @Test
-    fun `verify getIterator throw an exception with nested class when there are multiple key columns`() {
-        assertFailsWith<MultipleKeyColumnException> {
-            excelDB.getIterator<CarWithMultipleKey>("Car")
         }
     }
 
@@ -96,16 +70,9 @@ class ExcelDBNestedTest {
     }
 
     @Test
-    fun `verify getIterator throw an exception with nested class when there is no key columns`() {
+    fun `verify getData throw an exception with nested class when there is no key columns`() {
         assertFailsWith<NoKeyFieldException> {
-            excelDB.getIterator<CarWithNoKeyField>("Car").iterate()
-        }
-    }
-
-    @Test
-    fun `verify iterator throw an exception with nested class when key-value does not exists`() {
-        assertFailsWith<NullValueException> {
-            excelDB.getIterator<Car>("CarNullKey").iterate()
+            excelDB.getData<CarWithNoKeyField>("Car")
         }
     }
 
@@ -117,16 +84,29 @@ class ExcelDBNestedTest {
     }
 
     @Test
-    fun `verify iterator throw an exception with nested class when an unsupported key exists`() {
-        assertFailsWith<UnsupportedCellTypeException> {
-            excelDB.getIterator<CarWithUnsupportedKeyField>().iterate()
-        }
-    }
-
-    @Test
     fun `verify getData throw an exception with nested class when an unsupported key exists`() {
         assertFailsWith<UnsupportedCellTypeException> {
             excelDB.getData<CarWithUnsupportedKeyField>()
         }
+    }
+
+    @Test
+    fun `verify writeData saves all records with nested data`() {
+        val excelDB = ExcelDB(TEST_WORKBOOK_FOR_WRITE, FileMode.CREATE)
+        excelDB.writeDataToWorkbook(CARS)
+        excelDB.writeWorkbook()
+
+        assertTrue { File(TEST_WORKBOOK_FOR_WRITE).exists() }
+        assertEquals(CARS, ExcelDB(TEST_WORKBOOK_FOR_WRITE).getData<Car>())
+    }
+
+    @Test
+    fun `verify writeData saves all records with nested data with different sheet name`() {
+        val excelDB = ExcelDB(TEST_WORKBOOK_FOR_WRITE, FileMode.CREATE)
+        excelDB.writeDataToWorkbook(CARS, SHEET_NAME)
+        excelDB.writeWorkbook()
+
+        assertTrue { File(TEST_WORKBOOK_FOR_WRITE).exists() }
+        assertEquals(CARS, ExcelDB(TEST_WORKBOOK_FOR_WRITE).getData<Car>(SHEET_NAME))
     }
 }

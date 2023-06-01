@@ -6,6 +6,7 @@ import domain.Unsupported
 import domain.user.User
 import domain.user.UserMissingColumn
 import domain.user.UserNonUniqueColumns
+import domain.user.UserWithAnnotations
 import domain.user.UserWithDefault
 import domain.user.UserWithOptional
 import domain.user.UserWithSheetAnnotation
@@ -15,6 +16,7 @@ import exceptions.NonUniqueColumnException
 import exceptions.PrimaryConstructorMissing
 import exceptions.SheetNotFoundException
 import exceptions.UnsupportedDataTypeException
+import extensions.getData
 import org.junit.jupiter.api.assertDoesNotThrow
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -56,6 +58,13 @@ class ExcelDBGetDataTest {
     fun `verify getData doesn't throws exception when an optional column is missing`() {
         assertDoesNotThrow {
             excelDB.getData<UserWithOptional>()
+        }
+    }
+
+    @Test
+    fun `verify getData doesn't throw an exception when the column is annotated`() {
+        assertDoesNotThrow {
+            excelDB.getData<UserWithAnnotations>()
         }
     }
 

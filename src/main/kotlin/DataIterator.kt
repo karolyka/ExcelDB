@@ -1,7 +1,4 @@
-import exceptions.KeyNotFoundException
 import extensions.asString
-import extensions.getCellValueAs
-import org.apache.poi.ss.usermodel.Cell
 
 /**
  * This class implements the [Iterator] for [Entity] class and the related Excel Sheet
@@ -11,31 +8,10 @@ import org.apache.poi.ss.usermodel.Cell
  */
 class DataIterator<T : Entity>(private val sheetReference: SheetReference<T>) : Iterator<T> {
     private var rowIndex = sheetReference.columnNameRowIndex
-    private val indexColumn by lazy { sheetReference.getKeyCellIndex() ?: 0 }
-    private val keyType by lazy { sheetReference.getKeyType() }
-
-    /**
-     * Find a row by the given [Cell] value
-     *
-     * @param cell A [Cell]
-     * @return [T] or `null` when the row not found
-     * */
-    fun find(cell: Cell): T? {
-        val value = cell.getCellValueAs(keyType)
-        if (value != null) {
-            var index = sheetReference.columnNameRowIndex
-            while (hasNextRow(index)) {
-                if (value == sheetReference.getKeyCell(++index).getCellValueAs(keyType)) {
-                    return sheetReference.getEntity(index)
-                }
-            }
-            throw KeyNotFoundException(cell.asString())
-        }
-        return null
-    }
+    private val keyColumnIndex by lazy { sheetReference.getKeyCellIndex() ?: 0 }
 
     private fun hasNextRow(row: Int): Boolean {
-        return sheetReference.sheet.getRow(row + 1)?.getCell(indexColumn)?.asString()
+        return sheetReference.sheet.getRow(row + 1)?.getCell(keyColumnIndex)?.asString()
             .let { !it.isNullOrBlank() }
     }
 

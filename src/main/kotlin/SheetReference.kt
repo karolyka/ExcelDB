@@ -1,14 +1,14 @@
-import annotations.Column
 import exceptions.ColumnNotFoundException
-import exceptions.MultipleKeyColumnException
-import exceptions.NoKeyFieldException
 import exceptions.NonUniqueColumnException
 import exceptions.NullValueException
 import exceptions.PrimaryConstructorMissing
 import exceptions.RowNotFoundException
 import extensions.columnName
 import extensions.fieldName
+import extensions.getKeyField
 import extensions.getPrimaryConstructor
+import extensions.isIdColumn
+import extensions.isKeyColumn
 import extensions.isRequired
 import extensions.normalizeFieldName
 import org.apache.poi.ss.usermodel.Cell
@@ -48,18 +48,9 @@ class SheetReference<T : Entity>(kClass: KClass<T>, val sheet: Sheet, val excelD
             ParameterMapper(kParameter, cells.firstOrNull()?.cell?.columnIndex)
         }
         mappedFields = fields.filter { it.columnIndex != null }
-        keyField = mappedFields.filter { it.kParameter.findAnnotation<Column>()?.keyColumn == true }.getKeyField()
-            ?: mappedFields.filter { it.kParameter.fieldName == "id" }.getKeyField()
-    }
-
-    private fun List<ParameterMapper>.getKeyField(): ParameterMapper? {
-        if (size > 1) {
-            throw MultipleKeyColumnException(joinToString { it.kParameter.fieldName })
-        }
-        return if (size == 1) {
-            first()
-        } else {
-            null
+        keyField = with(mappedFields) {
+            filter { it.kParameter.isKeyColumn }.getKeyField()
+                ?: filter { it.kParameter.isIdColumn }.getKeyField()
         }
     }
 
@@ -87,29 +78,8 @@ class SheetReference<T : Entity>(kClass: KClass<T>, val sheet: Sheet, val excelD
 
     private fun getRow(rowIndex: Int): Row = sheet.getRow(rowIndex) ?: throw RowNotFoundException(rowIndex)
 
-    /** This method provides the type of key column for nested data */
-    fun getKeyType(): KClass<*> = getKeyField().kParameter.type.classifier as KClass<*>
-
-    /**
-     * This method provides the [Cell] that contains the key for nested data
-     *
-     * @param rowIndex An index of a [Row]
-     * */
-    fun getKeyCell(rowIndex: Int) = getKeyCell(getRow(rowIndex))
-
     /** This method provides the index of key cell for nested data */
     fun getKeyCellIndex(): Int? = keyField?.columnIndex
-
-    private fun getKeyCell(row: Row): Cell {
-        return row.getCell(getKeyField().columnIndex!!)
-    }
-
-    private fun getKeyField(): ParameterMapper {
-        if (keyField == null) {
-            throw NoKeyFieldException()
-        }
-        return keyField
-    }
 
     private fun validateCells(
         cells: List<FieldMap>,
