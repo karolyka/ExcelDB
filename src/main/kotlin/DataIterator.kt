@@ -1,4 +1,3 @@
-import exceptions.RowNotFoundException
 import extensions.asString
 
 /**
@@ -9,16 +8,19 @@ import extensions.asString
  */
 class DataIterator<T : Entity>(private val sheetReference: SheetReference<T>) : Iterator<T> {
     private var rowIndex = sheetReference.columnNameRowIndex
-    override fun hasNext(): Boolean {
-        return sheetReference.sheet.getRow(rowIndex + 1)?.getCell(1)?.asString()
+    private val keyColumnIndex by lazy { sheetReference.getKeyCellIndex() ?: 0 }
+
+    private fun hasNextRow(row: Int): Boolean {
+        return sheetReference.sheet.getRow(row + 1)?.getCell(keyColumnIndex)?.asString()
             .let { !it.isNullOrBlank() }
     }
+
+    override fun hasNext(): Boolean = hasNextRow(rowIndex)
 
     override fun next(): T {
         if (hasNext().not()) {
             throw NoSuchElementException()
         }
-        val row = sheetReference.sheet.getRow(++rowIndex) ?: throw RowNotFoundException(rowIndex)
-        return sheetReference.getEntity(row)
+        return sheetReference.getEntity(++rowIndex)
     }
 }

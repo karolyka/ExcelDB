@@ -1,17 +1,22 @@
 import domain.BoolAndFormula
 import domain.Missing
+import domain.NoPrimaryConstructor
 import domain.SpecialCharacters
-import domain.User
-import domain.UserMissingColumn
-import domain.UserNonUniqueColumns
-import domain.UserWithDefault
-import domain.UserWithOptional
-import domain.UserWithSheetAnnotation
-import domain.UserWithUnsupportedField
+import domain.Unsupported
+import domain.user.User
+import domain.user.UserMissingColumn
+import domain.user.UserNonUniqueColumns
+import domain.user.UserWithAnnotations
+import domain.user.UserWithDefault
+import domain.user.UserWithOptional
+import domain.user.UserWithSheetAnnotation
+import domain.user.UserWithUnsupportedField
 import exceptions.ColumnNotFoundException
 import exceptions.NonUniqueColumnException
+import exceptions.PrimaryConstructorMissing
 import exceptions.SheetNotFoundException
 import exceptions.UnsupportedDataTypeException
+import extensions.getData
 import org.junit.jupiter.api.assertDoesNotThrow
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -57,6 +62,13 @@ class ExcelDBGetDataTest {
     }
 
     @Test
+    fun `verify getData doesn't throw an exception when the column is annotated`() {
+        assertDoesNotThrow {
+            excelDB.getData<UserWithAnnotations>()
+        }
+    }
+
+    @Test
     fun `verify getData doesn't throws exception when an sheet annotation has valid name`() {
         assertDoesNotThrow {
             excelDB.getData<UserWithSheetAnnotation>()
@@ -79,7 +91,7 @@ class ExcelDBGetDataTest {
     }
 
     @Test
-    fun `verify getData hasNext returns false when sheet has no data`() {
+    fun `verify getData returns empty list when sheet has no data`() {
         assertEquals(emptyList(), excelDB.getData(User::class, EMPTY_USER))
     }
 
@@ -103,5 +115,19 @@ class ExcelDBGetDataTest {
     @Test
     fun `verify to normalize the column name when it contains special character`() {
         assertEquals(SPECIAL_CHARACTERS, excelDB.getData<SpecialCharacters>())
+    }
+
+    @Test
+    fun `verify getData throws exception when a parameter type is unsupported`() {
+        assertFailsWith<UnsupportedDataTypeException> {
+            excelDB.getData<Unsupported>()
+        }
+    }
+
+    @Test
+    fun `verify getData throws exception when there is no primary constructor`() {
+        assertFailsWith<PrimaryConstructorMissing> {
+            excelDB.getData<NoPrimaryConstructor>()
+        }
     }
 }

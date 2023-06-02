@@ -9,6 +9,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.Calendar
 import java.util.Date
+import kotlin.reflect.KClass
 
 private const val CELL_CONTAINS_ERROR = "#ERROR"
 
@@ -57,4 +58,21 @@ fun Cell.setCellValue(value: Any?) {
         is String -> setCellValue(value)
         else -> throw UnsupportedCellTypeException()
     }
+}
+
+/**
+ * Get a value of the [Cell] by the given [KClass]
+ * @param kClass [KClass]
+ * */
+fun Cell.getCellValueAs(kClass: KClass<*>): Any? = when (kClass) {
+    Boolean::class -> booleanCellValue
+//        Calendar::class ->
+//        Date::class ->
+    Double::class -> numericCellValue
+    Int::class -> intCellValue()
+//        LocalDate::class ->
+//        LocalDateTime::kClass ->
+    RichTextString::class -> stringValue
+    String::class -> stringValue
+    else -> throw UnsupportedCellTypeException()
 }

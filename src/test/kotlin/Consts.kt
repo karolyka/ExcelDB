@@ -1,7 +1,7 @@
 import domain.BoolAndFormula
 import domain.SpecialCharacters
-import domain.User
-import domain.UserWithDefault
+import domain.user.User
+import domain.user.UserWithDefault
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.util.Date
