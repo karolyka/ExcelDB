@@ -7,11 +7,14 @@ plugins {
     kotlin("jvm")
     id("org.jlleitschuh.gradle.ktlint")
     id("io.gitlab.arturbosch.detekt")
+    id("org.jetbrains.dokka")
     jacoco
+    `java-library`
+    `maven-publish`
 }
 
 group = "hu.chas.exceldb"
-version = "0.1"
+version = "0.9"
 
 repositories {
     mavenCentral()
@@ -79,7 +82,7 @@ kotlin {
 
 detekt {
     toolVersion = detektVersion
-    config = files("config/detekt/detekt.yml")
+    config.setFrom("config/detekt/detekt.yml")
     buildUponDefaultConfig = true
 }
 
@@ -94,5 +97,32 @@ ktlint {
     }
     filter {
         exclude("**/style-violations.kt")
+    }
+}
+
+val dokkaJavadocJar by tasks.register<Jar>("dokkaJavadocJar") {
+    dependsOn(tasks.dokkaJavadoc)
+    from(tasks.dokkaJavadoc.flatMap { it.outputDirectory })
+    archiveClassifier.set("javadoc")
+}
+
+val dokkaHtmlJar by tasks.register<Jar>("dokkaHtmlJar") {
+    dependsOn(tasks.dokkaHtml)
+    from(tasks.dokkaHtml.flatMap { it.outputDirectory })
+    archiveClassifier.set("html-doc")
+}
+
+java {
+    withSourcesJar()
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
+
+            artifact(dokkaJavadocJar)
+            artifact(dokkaHtmlJar)
+        }
     }
 }
