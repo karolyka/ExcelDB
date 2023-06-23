@@ -1,4 +1,5 @@
 import domain.BoolAndFormula
+import domain.DataTypes
 import domain.Missing
 import domain.NoPrimaryConstructor
 import domain.SpecialCharacters
@@ -129,5 +130,10 @@ class ExcelDBGetDataTest {
         assertFailsWith<PrimaryConstructorMissing> {
             excelDB.getData<NoPrimaryConstructor>()
         }
+    }
+
+    @Test
+    fun `verify getData can read all of the supported datatype`() {
+        assertEquals(DATA_TYPES, excelDB.getData<DataTypes>())
     }
 }

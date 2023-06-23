@@ -21,5 +21,9 @@ inline fun <reified T : Entity> ExcelDB.getData(sheetName: String? = null): Muta
  * @param entity    An [Iterable] entity
  * @param sheetName Use this name for data when provided
  * */
-inline fun <reified T : Entity> ExcelDB.writeDataToWorkbook(entity: Iterable<T>, sheetName: String? = null) =
-    writeDataToWorkbook(T::class, entity, sheetName)
+inline fun <reified T : Entity> ExcelDB.writeDataToWorkbook(
+    entity: Iterable<T>,
+    sheetName: String? = null,
+    clearCache: Boolean = false
+) =
+    writeDataToWorkbook(T::class, entity, sheetName, clearCache)

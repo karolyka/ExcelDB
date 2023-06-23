@@ -1,3 +1,4 @@
+import domain.DataTypes
 import domain.user.User
 import exceptions.NoDataException
 import extensions.getData
@@ -89,6 +90,17 @@ class ExcelDBWriteDataTest {
                 assertTrue { File(TEST_WORKBOOK_FOR_WRITE).exists() }
                 assertEquals(testUsers, ExcelDB(TEST_WORKBOOK_FOR_WRITE, FileMode.READ_OR_CREATE).getData<User>())
             }
+        }
+    }
+
+    @Test
+    fun `verify writeData saves all records with all supported type`() {
+        assertDoesNotThrow {
+            excelDB.writeDataToWorkbook(DataTypes::class, DATA_TYPES)
+            excelDB.writeWorkbook()
+
+            assertTrue { File(TEST_WORKBOOK_FOR_WRITE).exists() }
+            assertEquals(DATA_TYPES, ExcelDB(TEST_WORKBOOK_FOR_WRITE).getData<DataTypes>())
         }
     }
 }

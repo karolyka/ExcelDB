@@ -12,12 +12,16 @@ import org.apache.poi.ss.usermodel.Cell
 import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.usermodel.WorkbookFactory
+import org.apache.poi.ss.util.CellRangeAddress
+import org.apache.poi.xssf.usermodel.XSSFRow
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.nio.file.Paths
 import kotlin.reflect.KClass
+
+private const val MIN_WIDTH = 200
 
 /**
  * This class reads the data from an Excel Workbook
@@ -32,6 +36,10 @@ class ExcelDB(private val fileName: String, private val fileMode: FileMode = Fil
 
     private val workbook: Workbook
     private val cache = Cache()
+    private val cellStyles: CellStyles
+
+    var autoFilterEnabled = true
+    var autoWidthEnabled = true
 
     init {
         logger.debug { "File name: [$fileName], file mode: [$fileMode]" }
@@ -41,6 +49,7 @@ class ExcelDB(private val fileName: String, private val fileMode: FileMode = Fil
             FileMode.CREATE -> createWorkbook()
             FileMode.READ_OR_CREATE -> readOrCreateWorkbook()
         }
+        cellStyles = CellStyles(workbook)
     }
 
     /**
@@ -70,7 +79,14 @@ class ExcelDB(private val fileName: String, private val fileMode: FileMode = Fil
      * @param entity    An [Iterable] entity
      * @param sheetName Use this name for data when provided
      * */
-    fun <T : Entity> writeDataToWorkbook(kClass: KClass<T>, entity: Iterable<T>, sheetName: String? = null) {
+    fun <T : Entity> writeDataToWorkbook(
+        kClass: KClass<T>,
+        entity: Iterable<T>,
+        sheetName: String? = null,
+        clearCache: Boolean = false
+    ) {
+        if (clearCache)
+            cache.clearData(kClass)
         val dataSheetName = cache.sheetNameGetOrPut(kClass, sheetName)
         logger.debug { "Write [$kClass] data to [$dataSheetName] sheet" }
         with(workbook) {
@@ -94,10 +110,45 @@ class ExcelDB(private val fileName: String, private val fileMode: FileMode = Fil
         if (workbook.numberOfSheets == 0) {
             throw NoDataException()
         }
+        with(workbook) {
+            sheetIterator().forEach { sheet ->
+                val firstRow: XSSFRow = sheet.getRow(0) as XSSFRow
+                val lastCellNum = firstRow.lastCellNum.toInt() - 1
+
+                if (autoFilterEnabled) {
+                    val lastCell = firstRow.getCell(lastCellNum)
+                    sheet.setAutoFilter(CellRangeAddress(0, lastCell.rowIndex, 0, lastCellNum))
+                }
+
+                if (autoWidthEnabled)
+                    (0..lastCellNum).forEach {
+                        sheet.autoSizeColumn(it)
+                        if (sheet.getColumnWidth(it) == 0) {
+                            sheet.setColumnWidth(it, MIN_WIDTH)
+                        }
+                    }
+            }
+        }
         FileOutputStream(fileName).use {
             workbook.write(it)
             logger.debug { "Write Excel workbook to [$fileName] is done" }
         }
+    }
+
+    fun enableAutoFilter() {
+        autoFilterEnabled = true
+    }
+
+    fun disableAutoFilter() {
+        autoFilterEnabled = false
+    }
+
+    fun enableAutoWidth() {
+        autoWidthEnabled = true
+    }
+
+    fun disableAutoWidth() {
+        autoWidthEnabled = false
     }
 
     /**
@@ -149,7 +200,11 @@ class ExcelDB(private val fileName: String, private val fileMode: FileMode = Fil
         }
     }
 
-    private fun <T : Entity> writeDataToSheet(entity: Iterable<T>, worksheet: Sheet, fields: List<FieldReference<T>>) {
+    private fun <T : Entity> writeDataToSheet(
+        entity: Iterable<T>,
+        worksheet: Sheet,
+        fields: List<FieldReference<T>>
+    ) {
         entity.forEachIndexed { index, data ->
             cache.addEntity(data) { getEntityKeyMap(it, false) }
             worksheet.createRow(index + 1).let { row ->
@@ -161,7 +216,7 @@ class ExcelDB(private val fileName: String, private val fileMode: FileMode = Fil
                             value
                         }
                     }?.let {
-                        row.createCell(column).setCellValue(it)
+                        row.createCell(column).setCellValue(it, cellStyles)
                     }
                 }
             }
