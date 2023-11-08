@@ -17,7 +17,6 @@ import exceptions.NonUniqueColumnException
 import exceptions.PrimaryConstructorMissing
 import exceptions.SheetNotFoundException
 import exceptions.UnsupportedDataTypeException
-import extensions.getData
 import org.junit.jupiter.api.assertDoesNotThrow
 import kotlin.test.Test
 import kotlin.test.assertEquals

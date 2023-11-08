@@ -1,7 +1,6 @@
 import domain.DataTypes
 import domain.user.User
 import exceptions.NoDataException
-import extensions.getData
 import org.junit.jupiter.api.assertDoesNotThrow
 import java.io.File
 import java.io.FileNotFoundException

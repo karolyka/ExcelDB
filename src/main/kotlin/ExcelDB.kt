@@ -71,6 +71,15 @@ class ExcelDB(private val fileName: String, private val fileMode: FileMode = Fil
     }
 
     /**
+     * Get a [List]<[T]>
+     *
+     * @param T         An [Entity]
+     * @param sheetName Use this name for data when provided
+     */
+    inline fun <reified T : Entity> getData(sheetName: String? = null): MutableList<T> = getData(T::class, sheetName)
+
+
+    /**
      * Write data to Workbook
      * You have to call the [writeWorkbook] method to save to disk
      *
@@ -99,6 +108,21 @@ class ExcelDB(private val fileName: String, private val fileMode: FileMode = Fil
             writeDataToWorkbook(entityKClass, getData(entityKClass))
         }
     }
+
+    /**
+     * Write data to Workbook
+     * You have to call the [writeWorkbook] method to save to disk
+     *
+     * @param T         An [Entity]
+     * @param entity    An [Iterable] entity
+     * @param sheetName Use this name for data when provided
+     * */
+    inline fun <reified T : Entity> writeDataToWorkbook(
+        entity: Iterable<T>,
+        sheetName: String? = null,
+        clearCache: Boolean = false
+    ) =
+        writeDataToWorkbook(T::class, entity, sheetName, clearCache)
 
     /**
      * Write the Workbook to the disk
@@ -206,7 +230,7 @@ class ExcelDB(private val fileName: String, private val fileMode: FileMode = Fil
         fields: List<FieldReference<T>>
     ) {
         entity.forEachIndexed { index, data ->
-            cache.addEntity(data) { getEntityKeyMap(it, false) }
+            cache.addEntity(data) { getEntityKeyMap(it, false, worksheet.sheetName) }
             worksheet.createRow(index + 1).let { row ->
                 fields.forEachIndexed { column, fieldReference ->
                     fieldReference.property.get(data)?.let { value ->
@@ -223,8 +247,12 @@ class ExcelDB(private val fileName: String, private val fileMode: FileMode = Fil
         }
     }
 
-    private fun <T : Entity> getEntityKeyMap(kClass: KClass<T>, createAllowed: Boolean): MutableMap<Any?, Entity> =
-        getData(kClass, createAllowed = createAllowed)
+    private fun <T : Entity> getEntityKeyMap(
+        kClass: KClass<T>,
+        createAllowed: Boolean,
+        sheetName: String? = null
+    ): MutableMap<Any?, Entity> =
+        getData(kClass, sheetName, createAllowed = createAllowed)
             .associateBy { cache.getKeyFieldReference(kClass).get(it) }
             .toMutableMap()
 }
