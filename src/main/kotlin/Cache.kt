@@ -10,7 +10,7 @@ class Cache {
     private val keyCache = mutableMapOf<KClass<out Entity>, MutableMap<Any?, Entity>>()
     private val keyFieldReferenceCache = mutableMapOf<KClass<out Entity>, KeyFieldReference<out Entity>>()
     private val relatedEntities = mutableSetOf<KClass<Entity>>()
-    private val kClassSheetMap = mutableMapOf<Pair<KClass<out Entity>,String?>, String>()
+    private val kClassSheetMap = mutableMapOf<Pair<KClass<out Entity>, String?>, String>()
 
     /**
      * Returns the value for the given [kClass] if the value is present and not `null`.

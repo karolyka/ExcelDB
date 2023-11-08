@@ -37,20 +37,17 @@ fun Cell.asString(): String? {
 
 /** A property for cell, it contains the [Cell.getStringCellValue] as [String]? */
 val Cell.stringValue: String?
-    get() {
-        return (
-                try {
-                    this.stringCellValue
-                } catch (@Suppress("TooGenericExceptionCaught", "SwallowedException") e: Exception) { // TODO
-                    (this as XSSFCell).rawValue
-                }
-                )?.trim()
-    }
+    get() = try {
+        this.stringCellValue
+    } catch (@Suppress("TooGenericExceptionCaught", "SwallowedException") e: Exception) { // TODO
+        (this as XSSFCell).rawValue
+    }?.trim()
 
 /** Get a value of the [Cell] as [Int]? */
 internal fun Cell.intCellValue() = this.asString()?.toDouble()?.toInt()
 
 /** Set a value of the [Cell] */
+@Suppress("CyclomaticComplexMethod")
 fun Cell.setCellValue(value: Any?, cellStyles: CellStyles) {
     when (value) {
         is Boolean -> setCellValue(value)
