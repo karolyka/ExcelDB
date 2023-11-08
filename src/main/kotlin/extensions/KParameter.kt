@@ -2,6 +2,7 @@ package extensions
 
 import Entity
 import annotations.Column
+import annotations.Key
 import exceptions.UnsupportedParameterException
 import kotlin.reflect.KAnnotatedElement
 import kotlin.reflect.KCallable
@@ -39,10 +40,9 @@ val KParameter.asEntity: KClass<Entity>?
         }
     }
 
-/** Returns `true` when the [KAnnotatedElement] has the [Column] annotation
- * and the [Column.keyColumn] field is also `true` */
+/** Returns `true` when the [KAnnotatedElement] has the [Key] annotation */
 val KAnnotatedElement.isKeyColumn: Boolean
-    get() = findAnnotation<Column>()?.keyColumn == true
+    get() = findAnnotation<Key>() != null
 
 /** Returns `true` when the field name of [KParameter] is "id" */
 val KParameter.isIdColumn: Boolean

@@ -13,8 +13,8 @@ plugins {
     `maven-publish`
 }
 
-group = "hu.chas.exceldb"
-version = "0.9"
+group = "hu.chas"
+version = "0.9.12"
 
 repositories {
     mavenCentral()

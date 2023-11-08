@@ -9,8 +9,6 @@ import exceptions.MultipleKeyColumnException
 import exceptions.NoKeyFieldException
 import exceptions.NullValueException
 import exceptions.UnsupportedCellTypeException
-import extensions.getData
-import extensions.writeDataToWorkbook
 import org.junit.jupiter.api.assertDoesNotThrow
 import java.io.File
 import kotlin.test.Test

@@ -10,7 +10,7 @@ class Cache {
     private val keyCache = mutableMapOf<KClass<out Entity>, MutableMap<Any?, Entity>>()
     private val keyFieldReferenceCache = mutableMapOf<KClass<out Entity>, KeyFieldReference<out Entity>>()
     private val relatedEntities = mutableSetOf<KClass<Entity>>()
-    private val kClassSheetMap = mutableMapOf<KClass<out Entity>, String>()
+    private val kClassSheetMap = mutableMapOf<Pair<KClass<out Entity>, String?>, String>()
 
     /**
      * Returns the value for the given [kClass] if the value is present and not `null`.
@@ -65,7 +65,13 @@ class Cache {
      * Otherwise, puts the [sheetName] into the cache under the given key and returns the call result.
      */
     fun <T : Entity> sheetNameGetOrPut(kClass: KClass<T>, sheetName: String?) =
-        kClassSheetMap.getOrPut(kClass) { kClass.getSheetName(sheetName) }
+        kClassSheetMap.getOrPut(kClass to sheetName) { kClass.getSheetName(sheetName) }
+
+    /** Clear data & key cache of the given [kClass] parameter */
+    fun <T : Entity> clearData(kClass: KClass<T>) {
+        keyCache[kClass] = mutableMapOf()
+        dataCache[kClass] = mutableListOf()
+    }
 
     private fun <T : Entity> keyGetOrPut(kClass: KClass<T>, defaultValue: (KClass<T>) -> KeyMap): KeyMap =
         keyCache.getOrPut(kClass) { defaultValue(kClass) }

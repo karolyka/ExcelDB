@@ -1,4 +1,5 @@
 import domain.BoolAndFormula
+import domain.DataTypes
 import domain.Missing
 import domain.NoPrimaryConstructor
 import domain.SpecialCharacters
@@ -16,7 +17,6 @@ import exceptions.NonUniqueColumnException
 import exceptions.PrimaryConstructorMissing
 import exceptions.SheetNotFoundException
 import exceptions.UnsupportedDataTypeException
-import extensions.getData
 import org.junit.jupiter.api.assertDoesNotThrow
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -129,5 +129,10 @@ class ExcelDBGetDataTest {
         assertFailsWith<PrimaryConstructorMissing> {
             excelDB.getData<NoPrimaryConstructor>()
         }
+    }
+
+    @Test
+    fun `verify getData can read all of the supported datatype`() {
+        assertEquals(DATA_TYPES, excelDB.getData<DataTypes>())
     }
 }
