@@ -27,8 +27,8 @@ private const val MIN_WIDTH = 200
 /**
  * This class reads the data from an Excel Workbook
  *
- * @property fileName Name of the Excel workbook
- * @property fileMode Type of workbook creating - default: [FileMode.READ]
+ * @param fileName Name of the Excel workbook
+ * @param fileMode Type of workbook creating - default: [FileMode.READ]
  */
 @Suppress("TooManyFunctions")
 class ExcelDB(private val fileName: String, private val fileMode: FileMode = FileMode.READ) {
@@ -40,11 +40,11 @@ class ExcelDB(private val fileName: String, private val fileMode: FileMode = Fil
     private val cache = Cache()
     private val cellStyles: CellStyles
 
-    /** Enable the autofilter feature for the sheets */
-    var autoFilterEnabled = true
+    /** Enable the auto-filter feature for the sheets */
+    private var autoFilterEnabled = true
 
     /** Enable to calculate the widths for the columns */
-    var autoWidthEnabled = true
+    private var autoWidthEnabled = true
 
     init {
         logger.debug { "File name: [$fileName], file mode: [$fileMode]" }
@@ -168,7 +168,7 @@ class ExcelDB(private val fileName: String, private val fileMode: FileMode = Fil
         }
 
         if (autoWidthEnabled) {
-            (0..lastCellNum).forEach {
+            for (it in 0..lastCellNum) {
                 sheet.autoSizeColumn(it)
                 if (sheet.getColumnWidth(it) == 0) {
                     sheet.setColumnWidth(it, MIN_WIDTH)
@@ -177,12 +177,12 @@ class ExcelDB(private val fileName: String, private val fileMode: FileMode = Fil
         }
     }
 
-    /** Enable the autofilter feature for the sheets */
+    /** Enable the auto-filter feature for the sheets */
     fun enableAutoFilter() {
         autoFilterEnabled = true
     }
 
-    /** Disable the autofilter feature for the sheets */
+    /** Disable the auto-filter feature for the sheets */
     fun disableAutoFilter() {
         autoFilterEnabled = false
     }

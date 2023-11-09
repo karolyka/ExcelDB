@@ -1,10 +1,10 @@
 import extensions.asString
 
 /**
- * This class implements the [Iterator] for [Entity] class and the related Excel Sheet
+ * This class implements an [Iterator] for [Entity] class and the related Excel Sheet
  *
- * @param T  An [Entity] type
- * @property sheetReference
+ * @param T An [Entity] type
+ * @param sheetReference A [SheetReference]
  */
 class DataIterator<T : Entity>(private val sheetReference: SheetReference<T>) : Iterator<T> {
     private var rowIndex = sheetReference.columnNameRowIndex

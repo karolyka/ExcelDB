@@ -10,9 +10,9 @@ import kotlin.reflect.full.memberProperties
  *  This class holds the references of a field
  *
  *  @param T          An [Entity]
- *  @property kClass     [KClass] of the [Entity]
- *  @property kParameter A constructor parameter
- *  @property name       Name of the field/column
+ *  @param kClass     [KClass] of the [Entity]
+ *  @param kParameter A constructor parameter
+ *  @property name    Name of the field/column
  *  */
 class FieldReference<T : Entity>(
     private val kClass: KClass<T>,

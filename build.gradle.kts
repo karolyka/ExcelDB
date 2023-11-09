@@ -14,7 +14,7 @@ plugins {
 }
 
 group = "hu.chas"
-version = "0.9.12"
+version = "0.10"
 
 repositories {
     mavenCentral()
