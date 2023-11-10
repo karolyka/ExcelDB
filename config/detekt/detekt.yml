@@ -44,10 +44,10 @@ console-reports:
 output-reports:
   active: true
   exclude:
-  # - 'TxtOutputReport'
-  # - 'XmlOutputReport'
-  # - 'HtmlOutputReport'
-  # - 'MdOutputReport'
+   - 'TxtOutputReport'
+   - 'XmlOutputReport'
+   - 'HtmlOutputReport'
+   - 'MdOutputReport'
 
 comments:
   active: true
@@ -65,27 +65,27 @@ comments:
     active: false
     endOfSentenceFormat: '([.?!][ \t\n\r\f<])|([.?!:]$)'
   KDocReferencesNonPublicProperty:
-    active: false
+    active: true
     excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**']
   OutdatedDocumentation:
-    active: false
+    active: true
     matchTypeParameters: true
     matchDeclarationsOrder: true
     allowParamOnConstructorProperties: false
   UndocumentedPublicClass:
-    active: false
+    active: true
     excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**']
     searchInNestedClass: true
     searchInInnerClass: true
     searchInInnerObject: true
     searchInInnerInterface: true
-    searchInProtectedClass: false
+    searchInProtectedClass: true
   UndocumentedPublicFunction:
-    active: false
+    active: true
     excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**']
     searchProtectedFunction: false
   UndocumentedPublicProperty:
-    active: false
+    active: true
     excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**']
     searchProtectedProperty: false
 
@@ -146,7 +146,7 @@ complexity:
     active: true
     threshold: 4
   NestedScopeFunctions:
-    active: false
+    active: true
     threshold: 1
     functions:
       - 'kotlin.apply'
@@ -305,7 +305,6 @@ naming:
   BooleanPropertyNaming:
     active: false
     allowedPattern: '^(is|has|are)'
-    ignoreOverridden: true
   ClassNaming:
     active: true
     classPattern: '[A-Z][a-zA-Z0-9]*'
@@ -314,7 +313,6 @@ naming:
     parameterPattern: '[a-z][A-Za-z0-9]*'
     privateParameterPattern: '[a-z][A-Za-z0-9]*'
     excludeClassPattern: '$^'
-    ignoreOverridden: true
   EnumNaming:
     active: true
     enumEntryPattern: '[A-Z][_a-zA-Z0-9]*'
@@ -332,12 +330,10 @@ naming:
     excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**']
     functionPattern: '[a-z][a-zA-Z0-9]*'
     excludeClassPattern: '$^'
-    ignoreOverridden: true
   FunctionParameterNaming:
     active: true
     parameterPattern: '[a-z][A-Za-z0-9]*'
     excludeClassPattern: '$^'
-    ignoreOverridden: true
   InvalidPackageDeclaration:
     active: true
     rootPackage: ''
@@ -379,14 +375,13 @@ naming:
     variablePattern: '[a-z][A-Za-z0-9]*'
     privateVariablePattern: '(_)?[a-z][A-Za-z0-9]*'
     excludeClassPattern: '$^'
-    ignoreOverridden: true
 
 performance:
   active: true
   ArrayPrimitive:
     active: true
   CouldBeSequence:
-    active: false
+    active: true
     threshold: 3
   ForEachOnRange:
     active: true
@@ -395,7 +390,7 @@ performance:
     active: true
     excludes: ['**/test/**', '**/androidTest/**', '**/commonTest/**', '**/jvmTest/**', '**/jsTest/**', '**/iosTest/**']
   UnnecessaryPartOfBinaryExpression:
-    active: false
+    active: true
   UnnecessaryTemporaryInstantiation:
     active: true
 
@@ -530,12 +525,7 @@ style:
     includeLineWrapping: false
   ForbiddenComment:
     active: true
-    values:
-      - 'FIXME:'
-      - 'STOPSHIP:'
-      - 'TODO:'
     allowedPatterns: ''
-    customMessage: ''
   ForbiddenImport:
     active: false
     imports: []
@@ -580,8 +570,6 @@ style:
     ignoreEnums: false
     ignoreRanges: false
     ignoreExtensionFunctions: true
-  MandatoryBracesIfStatements:
-    active: false
   MandatoryBracesLoops:
     active: false
   MaxChainedCallsOnSameLine:
@@ -616,8 +604,6 @@ style:
   OptionalAbstractKeyword:
     active: true
   OptionalUnit:
-    active: false
-  OptionalWhenBraces:
     active: false
   PreferToOverPairSyntax:
     active: false

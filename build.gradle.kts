@@ -7,22 +7,24 @@ plugins {
     kotlin("jvm")
     id("org.jlleitschuh.gradle.ktlint")
     id("io.gitlab.arturbosch.detekt")
+    id("org.jetbrains.dokka")
     jacoco
+    `java-library`
+    `maven-publish`
 }
 
-group = "hu.chas.exceldb"
-version = "0.1"
+group = "hu.chas"
+version = "0.10"
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    api("org.apache.poi:poi-ooxml:5.2.3")
+    api("org.apache.poi:poi-ooxml:5.2.4")
 
-    implementation("org.apache.logging.log4j:log4j-core:2.20.0")
-    implementation("org.slf4j:slf4j-simple:2.0.7")
-    implementation("ch.qos.logback:logback-classic:1.2.11")
+    implementation("org.apache.logging.log4j:log4j-core:2.21.1")
+    implementation("ch.qos.logback:logback-classic:1.4.11")
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
 
     implementation(kotlin("reflect"))
@@ -80,7 +82,7 @@ kotlin {
 
 detekt {
     toolVersion = detektVersion
-    config = files("config/detekt/detekt.yml")
+    config.setFrom("config/detekt/detekt.yml")
     buildUponDefaultConfig = true
 }
 
@@ -95,5 +97,32 @@ ktlint {
     }
     filter {
         exclude("**/style-violations.kt")
+    }
+}
+
+val dokkaJavadocJar by tasks.register<Jar>("dokkaJavadocJar") {
+    dependsOn(tasks.dokkaJavadoc)
+    from(tasks.dokkaJavadoc.flatMap { it.outputDirectory })
+    archiveClassifier.set("javadoc")
+}
+
+val dokkaHtmlJar by tasks.register<Jar>("dokkaHtmlJar") {
+    dependsOn(tasks.dokkaHtml)
+    from(tasks.dokkaHtml.flatMap { it.outputDirectory })
+    archiveClassifier.set("html-doc")
+}
+
+java {
+    withSourcesJar()
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
+
+            artifact(dokkaJavadocJar)
+            artifact(dokkaHtmlJar)
+        }
     }
 }
