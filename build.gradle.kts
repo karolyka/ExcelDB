@@ -21,7 +21,7 @@ repositories {
 }
 
 dependencies {
-    api("org.apache.poi:poi-ooxml:5.2.4")
+    api("org.apache.poi:poi-ooxml:5.2.5")
 
     implementation("org.apache.logging.log4j:log4j-core:2.21.1")
     implementation("ch.qos.logback:logback-classic:1.4.11")
