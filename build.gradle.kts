@@ -24,7 +24,7 @@ dependencies {
     api("org.apache.poi:poi-ooxml:5.2.5")
 
     implementation("org.apache.logging.log4j:log4j-core:2.22.1")
-    implementation("ch.qos.logback:logback-classic:1.4.14")
+    implementation("ch.qos.logback:logback-classic:1.5.6")
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
 
     implementation(kotlin("reflect"))
