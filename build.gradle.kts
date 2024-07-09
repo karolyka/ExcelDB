@@ -14,14 +14,14 @@ plugins {
 }
 
 group = "hu.chas"
-version = "0.10"
+version = "0.11"
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    api("org.apache.poi:poi-ooxml:5.2.5")
+    api("org.apache.poi:poi-ooxml:5.3.0")
 
     implementation("org.apache.logging.log4j:log4j-core:2.22.1")
     implementation("ch.qos.logback:logback-classic:1.4.14")
