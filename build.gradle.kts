@@ -23,7 +23,7 @@ repositories {
 dependencies {
     api("org.apache.poi:poi-ooxml:5.3.0")
 
-    implementation("org.apache.logging.log4j:log4j-core:2.22.1")
+    implementation("org.apache.logging.log4j:log4j-core:2.23.1")
     implementation("ch.qos.logback:logback-classic:1.5.8")
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
 
