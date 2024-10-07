@@ -7,5 +7,5 @@ enum class FileMode {
     CREATE,
 
     /** Read an existing Workbook or create if not */
-    READ_OR_CREATE
+    READ_OR_CREATE,
 }

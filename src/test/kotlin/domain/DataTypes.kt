@@ -16,6 +16,6 @@ data class DataTypes(
     val int: Int,
     val localDate: LocalDate,
     val localDateTime: LocalDateTime,
-    val localTime: LocalTime
+    val localTime: LocalTime,
 ) :
     Entity

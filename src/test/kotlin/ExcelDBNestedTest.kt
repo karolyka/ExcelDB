@@ -23,18 +23,20 @@ class ExcelDBNestedTest {
         private val TOYOTA = CarFactory("Toyota", "Toyota Car")
         private val FERRARI = CarFactory("Ferrari", "Ferrari Car")
         private val HONDA = CarFactory("Honda", "Honda Car")
-        private val CARS = listOf(
-            Car(1, "Prius", TOYOTA),
-            Car(2, "F40", FERRARI),
-            Car(3, "Yaris", TOYOTA),
-            Car(4, "Civic", HONDA)
-        )
-        private val CARS_WITH_ENGINE = listOf(
-            CarWithEngine(1, "Prius", TOYOTA, TOYOTA),
-            CarWithEngine(2, "F40", FERRARI, FERRARI),
-            CarWithEngine(3, "Yaris", TOYOTA, null),
-            CarWithEngine(4, "Civic", HONDA, null)
-        )
+        private val CARS =
+            listOf(
+                Car(1, "Prius", TOYOTA),
+                Car(2, "F40", FERRARI),
+                Car(3, "Yaris", TOYOTA),
+                Car(4, "Civic", HONDA),
+            )
+        private val CARS_WITH_ENGINE =
+            listOf(
+                CarWithEngine(1, "Prius", TOYOTA, TOYOTA),
+                CarWithEngine(2, "F40", FERRARI, FERRARI),
+                CarWithEngine(3, "Yaris", TOYOTA, null),
+                CarWithEngine(4, "Civic", HONDA, null),
+            )
     }
 
     private val excelDB: ExcelDB = ExcelDB(TEST_WORKBOOK)

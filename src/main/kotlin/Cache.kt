@@ -17,8 +17,10 @@ class Cache {
      * Otherwise, calls the [defaultValue] function,
      * puts its result into the cache under the given key and returns the call result.
      */
-    fun dataGetOrPut(kClass: KClass<out Entity>, defaultValue: () -> EntityList): EntityList =
-        dataCache.getOrPut(kClass, defaultValue)
+    fun dataGetOrPut(
+        kClass: KClass<out Entity>,
+        defaultValue: () -> EntityList,
+    ): EntityList = dataCache.getOrPut(kClass, defaultValue)
 
     /** Returns and remove the first element which is not equal to the given [kClass] from the related entities set */
     fun <T : Entity> popRelatedEntity(kClass: KClass<T>): KClass<Entity>? {
@@ -29,7 +31,10 @@ class Cache {
 
     /** Adds the [data] value to the cache.
      * The [action] will be executed when there is no cache entry for the class of data */
-    fun <T : Entity> addEntity(data: T, action: (KClass<out T>) -> KeyMap): Any? {
+    fun <T : Entity> addEntity(
+        data: T,
+        action: (KClass<out T>) -> KeyMap,
+    ): Any? {
         val kClass = data::class
         return getKeyFieldReference(kClass).get(data).let { key ->
             getEntityOrNull(kClass, key, action) ?: let {
@@ -50,7 +55,11 @@ class Cache {
      * Otherwise, calls the [action] function,
      * puts its result into the cache under the given key and returns the call result.
      */
-    fun <T : Entity> getEntityOrNull(kClass: KClass<T>, key: Any?, action: (KClass<T>) -> KeyMap): T? {
+    fun <T : Entity> getEntityOrNull(
+        kClass: KClass<T>,
+        key: Any?,
+        action: (KClass<T>) -> KeyMap,
+    ): T? {
         @Suppress("UNCHECKED_CAST")
         return keyGetOrPut(kClass, action)[key] as T?
     }
@@ -64,8 +73,10 @@ class Cache {
      * Returns the value for the given [kClass] if the value is present and not `null`.
      * Otherwise, puts the [sheetName] into the cache under the given key and returns the call result.
      */
-    fun <T : Entity> sheetNameGetOrPut(kClass: KClass<T>, sheetName: String?) =
-        kClassSheetMap.getOrPut(kClass to sheetName) { kClass.getSheetName(sheetName) }
+    fun <T : Entity> sheetNameGetOrPut(
+        kClass: KClass<T>,
+        sheetName: String?,
+    ) = kClassSheetMap.getOrPut(kClass to sheetName) { kClass.getSheetName(sheetName) }
 
     /** Clear data & key cache of the given [kClass] parameter */
     fun <T : Entity> clearData(kClass: KClass<T>) {
@@ -73,12 +84,13 @@ class Cache {
         dataCache[kClass] = mutableListOf()
     }
 
-    private fun <T : Entity> keyGetOrPut(kClass: KClass<T>, defaultValue: (KClass<T>) -> KeyMap): KeyMap =
-        keyCache.getOrPut(kClass) { defaultValue(kClass) }
+    private fun <T : Entity> keyGetOrPut(
+        kClass: KClass<T>,
+        defaultValue: (KClass<T>) -> KeyMap,
+    ): KeyMap = keyCache.getOrPut(kClass) { defaultValue(kClass) }
 
     private fun keyFieldReferenceGetOrPut(
         kClass: KClass<out Entity>,
-        defaultValue: () -> KeyFieldReference<out Entity>
-    ): KeyFieldReference<out Entity> =
-        keyFieldReferenceCache.getOrPut(kClass, defaultValue)
+        defaultValue: () -> KeyFieldReference<out Entity>,
+    ): KeyFieldReference<out Entity> = keyFieldReferenceCache.getOrPut(kClass, defaultValue)
 }
