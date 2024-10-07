@@ -23,7 +23,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class ExcelDBGetDataTest {
-
     private val excelDB: ExcelDB = ExcelDB(TEST_WORKBOOK)
 
     @Test

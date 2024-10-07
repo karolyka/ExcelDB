@@ -12,7 +12,6 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 class ExcelDBWriteDataTest {
-
     private val excelDB: ExcelDB = ExcelDB(TEST_WORKBOOK_FOR_WRITE, FileMode.CREATE)
 
     @BeforeTest

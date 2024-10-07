@@ -17,7 +17,7 @@ import kotlin.reflect.full.memberProperties
 class FieldReference<T : Entity>(
     private val kClass: KClass<T>,
     private val kParameter: KParameter = kClass.getKeyField(),
-    val name: String = kParameter.fieldName
+    val name: String = kParameter.fieldName,
 ) {
     private val normalizedName by lazy { name.normalizeFieldName() }
     private val asEntity by lazy { kParameter.asEntity }

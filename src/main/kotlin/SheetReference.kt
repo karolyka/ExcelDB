@@ -37,21 +37,25 @@ class SheetReference<T : Entity>(kClass: KClass<T>, val sheet: Sheet, val excelD
     private val keyField: ParameterMapper?
 
     init {
-        val fieldNamesRow = sheet.getRow(columnNameRowIndex)
-            ?.map { FieldMap(it.stringCellValue.normalizeFieldName(), it) }
-            ?: throw RowNotFoundException(columnNameRowIndex)
-        fields = primaryConstructor.parameters.map { kParameter ->
-            val cells = FieldReference(kClass, kParameter).let { fieldReference ->
-                fieldNamesRow.filter { fieldReference.isEqual(it.fieldName) }
+        val fieldNamesRow =
+            sheet.getRow(columnNameRowIndex)
+                ?.map { FieldMap(it.stringCellValue.normalizeFieldName(), it) }
+                ?: throw RowNotFoundException(columnNameRowIndex)
+        fields =
+            primaryConstructor.parameters.map { kParameter ->
+                val cells =
+                    FieldReference(kClass, kParameter).let { fieldReference ->
+                        fieldNamesRow.filter { fieldReference.isEqual(it.fieldName) }
+                    }
+                validateCells(cells, kParameter)
+                ParameterMapper(kParameter, cells.firstOrNull()?.cell?.columnIndex)
             }
-            validateCells(cells, kParameter)
-            ParameterMapper(kParameter, cells.firstOrNull()?.cell?.columnIndex)
-        }
         mappedFields = fields.filter { it.columnIndex != null }
-        keyField = with(mappedFields) {
-            filter { it.kParameter.isKeyColumn }.getKeyField()
-                ?: filter { it.kParameter.isIdColumn }.getKeyField()
-        }
+        keyField =
+            with(mappedFields) {
+                filter { it.kParameter.isKeyColumn }.getKeyField()
+                    ?: filter { it.kParameter.isIdColumn }.getKeyField()
+            }
     }
 
     private fun getEntity(row: Row): T {
@@ -66,7 +70,7 @@ class SheetReference<T : Entity>(kClass: KClass<T>, val sheet: Sheet, val excelD
                 } else {
                     null
                 }
-            }.toMap()
+            }.toMap(),
         )
     }
 
@@ -83,7 +87,7 @@ class SheetReference<T : Entity>(kClass: KClass<T>, val sheet: Sheet, val excelD
 
     private fun validateCells(
         cells: List<FieldMap>,
-        kParameter: KParameter
+        kParameter: KParameter,
     ) {
         if (cells.size > 1) throw NonUniqueColumnException(cells.joinToString { "${it.cell} -> ${it.fieldName}" })
         if (cells.isEmpty() && kParameter.isOptional.not()) {

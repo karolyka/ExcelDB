@@ -12,8 +12,9 @@ import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
 
 /** Returns the primary constructor or throw a [PrimaryConstructorMissing] exception when it doesn't exist */
-fun <T : Entity> KClass<T>.getPrimaryConstructor(): KFunction<T> =
-    primaryConstructor ?: throw PrimaryConstructorMissing(simpleName)
+fun <T : Entity> KClass<T>.getPrimaryConstructor(): KFunction<T> {
+    return primaryConstructor ?: throw PrimaryConstructorMissing(simpleName)
+}
 
 /** Returns the field references */
 fun <T : Entity> KClass<T>.getFieldReferences() = getPrimaryConstructor().parameters.map { FieldReference(this, it) }

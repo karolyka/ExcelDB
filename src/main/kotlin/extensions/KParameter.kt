@@ -26,19 +26,21 @@ val KParameter.isRequired: Boolean
 
 /** It is provided the column name of parameter by [Column] annotation or by name if the annotation doesn't exist */
 val KAnnotatedElement.columnName: String?
-    get() = findAnnotation<Column>()?.name?.takeIf { it.isNotBlank() }
-        ?: (this as? KParameter)?.name
+    get() =
+        findAnnotation<Column>()?.name?.takeIf { it.isNotBlank() }
+            ?: (this as? KParameter)?.name
 
 /** It is provided the [KParameter] as [KClass]<[Entity]> or `null` if it's not an [Entity] */
 val KParameter.asEntity: KClass<Entity>?
-    get() = (type.classifier as KClass<*>).let { kClass ->
-        if (kClass.isSubclassOf(Entity::class)) {
-            @Suppress("UNCHECKED_CAST")
-            kClass as KClass<Entity>
-        } else {
-            null
+    get() =
+        (type.classifier as KClass<*>).let { kClass ->
+            if (kClass.isSubclassOf(Entity::class)) {
+                @Suppress("UNCHECKED_CAST")
+                kClass as KClass<Entity>
+            } else {
+                null
+            }
         }
-    }
 
 /** Returns `true` when the [KAnnotatedElement] has the [Key] annotation */
 val KAnnotatedElement.isKeyColumn: Boolean
