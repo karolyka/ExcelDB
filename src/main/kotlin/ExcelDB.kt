@@ -49,11 +49,12 @@ class ExcelDB(private val fileName: String, private val fileMode: FileMode = Fil
     init {
         logger.debug { "File name: [$fileName], file mode: [$fileMode]" }
         ZipSecureFile.setMinInflateRatio(0.0)
-        workbook = when (fileMode) {
-            FileMode.READ -> readWorkbook()
-            FileMode.CREATE -> createWorkbook()
-            FileMode.READ_OR_CREATE -> readOrCreateWorkbook()
-        }
+        workbook =
+            when (fileMode) {
+                FileMode.READ -> readWorkbook()
+                FileMode.CREATE -> createWorkbook()
+                FileMode.READ_OR_CREATE -> readOrCreateWorkbook()
+            }
         cellStyles = CellStyles(workbook)
     }
 
@@ -68,7 +69,7 @@ class ExcelDB(private val fileName: String, private val fileMode: FileMode = Fil
     fun <T : Entity> getData(
         kClass: KClass<T>,
         sheetName: String? = null,
-        createAllowed: Boolean = false
+        createAllowed: Boolean = false,
     ): MutableList<T> {
         logger.debug { "Get data for [$kClass]" }
         @Suppress("UNCHECKED_CAST")
@@ -97,7 +98,7 @@ class ExcelDB(private val fileName: String, private val fileMode: FileMode = Fil
         kClass: KClass<T>,
         entity: Iterable<T>,
         sheetName: String? = null,
-        clearCache: Boolean = false
+        clearCache: Boolean = false,
     ) {
         if (clearCache) {
             cache.clearData(kClass)
@@ -127,9 +128,8 @@ class ExcelDB(private val fileName: String, private val fileMode: FileMode = Fil
     inline fun <reified T : Entity> writeDataToWorkbook(
         entity: Iterable<T>,
         sheetName: String? = null,
-        clearCache: Boolean = false
-    ) =
-        writeDataToWorkbook(T::class, entity, sheetName, clearCache)
+        clearCache: Boolean = false,
+    ) = writeDataToWorkbook(T::class, entity, sheetName, clearCache)
 
     /**
      * Write the Workbook to the disk
@@ -161,7 +161,7 @@ class ExcelDB(private val fileName: String, private val fileMode: FileMode = Fil
     private fun setupAutoFilterAndWidth(
         sheet: Sheet,
         lastCell: XSSFCell,
-        lastCellNum: Int
+        lastCellNum: Int,
     ) {
         if (autoFilterEnabled) {
             sheet.setAutoFilter(CellRangeAddress(0, lastCell.rowIndex, 0, lastCellNum))
@@ -205,7 +205,10 @@ class ExcelDB(private val fileName: String, private val fileMode: FileMode = Fil
      * @param cell   A [Cell]
      * @return [T] or `null` when the row not found
      * */
-    internal fun <T : Entity> findEntity(kClass: KClass<T>, cell: Cell): T? {
+    internal fun <T : Entity> findEntity(
+        kClass: KClass<T>,
+        cell: Cell,
+    ): T? {
         return cache.getKeyFieldReference(kClass).let { keyField ->
             cell.getCellValueAs(keyField.keyFieldKClass)?.let { key ->
                 cache.getEntityOrNull(kClass, key) { getEntityKeyMap(kClass, false) }
@@ -217,7 +220,7 @@ class ExcelDB(private val fileName: String, private val fileMode: FileMode = Fil
     private fun <T : Entity> getIterator(
         kClass: KClass<T>,
         sheetName: String?,
-        createAllowed: Boolean
+        createAllowed: Boolean,
     ): DataIterator<T> {
         logger.debug { "Get iterator for [$kClass]" }
         return cache.sheetNameGetOrPut(kClass, sheetName)
@@ -249,7 +252,7 @@ class ExcelDB(private val fileName: String, private val fileMode: FileMode = Fil
     private fun <T : Entity> writeDataToSheet(
         entity: Iterable<T>,
         worksheet: Sheet,
-        fields: List<FieldReference<T>>
+        fields: List<FieldReference<T>>,
     ) {
         entity.forEachIndexed { index, data ->
             cache.addEntity(data) { getEntityKeyMap(it, false, worksheet.sheetName) }
@@ -272,7 +275,7 @@ class ExcelDB(private val fileName: String, private val fileMode: FileMode = Fil
     private fun <T : Entity> getEntityKeyMap(
         kClass: KClass<T>,
         createAllowed: Boolean,
-        sheetName: String? = null
+        sheetName: String? = null,
     ): MutableMap<Any?, Entity> =
         getData(kClass, sheetName, createAllowed = createAllowed)
             .associateBy { cache.getKeyFieldReference(kClass).get(it) }

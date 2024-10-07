@@ -37,18 +37,25 @@ fun Cell.asString(): String? {
 
 /** A property for cell, it contains the [Cell.getStringCellValue] as [String]? */
 val Cell.stringValue: String?
-    get() = try {
-        this.stringCellValue
-    } catch (@Suppress("TooGenericExceptionCaught", "SwallowedException") e: Exception) { // TODO
-        (this as XSSFCell).rawValue
-    }?.trim()
+    get() =
+        try {
+            this.stringCellValue
+        } catch (
+            @Suppress("TooGenericExceptionCaught", "SwallowedException") e: Exception,
+        ) {
+            // TODO
+            (this as XSSFCell).rawValue
+        }?.trim()
 
 /** Get a value of the [Cell] as [Int]? */
 internal fun Cell.intCellValue() = this.asString()?.toDouble()?.toInt()
 
 /** Set a value of the [Cell] */
 @Suppress("CyclomaticComplexMethod")
-fun Cell.setCellValue(value: Any?, cellStyles: CellStyles) {
+fun Cell.setCellValue(
+    value: Any?,
+    cellStyles: CellStyles,
+) {
     when (value) {
         is Boolean -> setCellValue(value)
         is Calendar -> setCellValue(value.time).also { cellStyle = cellStyles.getStyle(DATETIME) }
@@ -68,16 +75,17 @@ fun Cell.setCellValue(value: Any?, cellStyles: CellStyles) {
  * Get a value of the [Cell] by the given [KClass]
  * @param kClass [KClass]
  * */
-fun Cell.getCellValueAs(kClass: KClass<*>): Any? = when (kClass) {
-    Boolean::class -> booleanCellValue
-    Calendar::class -> dateCellValue?.asCalendar
-    Date::class -> dateCellValue
-    Double::class -> numericCellValue
-    Int::class -> intCellValue()
-    LocalDate::class -> dateCellValue?.asLocalDate
-    LocalDateTime::class -> dateCellValue?.asLocalDateTime
-    LocalTime::class -> dateCellValue?.asLocalTime
-    RichTextString::class -> stringValue
-    String::class -> stringValue
-    else -> throw UnsupportedCellTypeException()
-}
+fun Cell.getCellValueAs(kClass: KClass<*>): Any? =
+    when (kClass) {
+        Boolean::class -> booleanCellValue
+        Calendar::class -> dateCellValue?.asCalendar
+        Date::class -> dateCellValue
+        Double::class -> numericCellValue
+        Int::class -> intCellValue()
+        LocalDate::class -> dateCellValue?.asLocalDate
+        LocalDateTime::class -> dateCellValue?.asLocalDateTime
+        LocalTime::class -> dateCellValue?.asLocalTime
+        RichTextString::class -> stringValue
+        String::class -> stringValue
+        else -> throw UnsupportedCellTypeException()
+    }

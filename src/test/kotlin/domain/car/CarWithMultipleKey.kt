@@ -6,5 +6,5 @@ import annotations.Key
 data class CarWithMultipleKey(
     @Key val id: Int,
     @Key val name: String,
-    val factory: CarFactory
+    val factory: CarFactory,
 ) : Entity

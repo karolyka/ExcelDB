@@ -15,7 +15,7 @@ import kotlin.reflect.KClass
  * */
 fun <T : Entity> Workbook.createSheet(
     kClass: KClass<T>,
-    sheetName: String?
+    sheetName: String?,
 ): Pair<Sheet, List<FieldReference<T>>> {
     return kClass.getFieldReferences().let { fields ->
         createSheet(sheetName).apply { createFieldNamesRow(fields) } to fields

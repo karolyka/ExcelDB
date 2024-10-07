@@ -4,7 +4,6 @@ import kotlin.test.Test
 import kotlin.test.assertFailsWith
 
 class ExcelDBTest {
-
     @Test
     fun `verify ExcelDB throws exception when the file doesn't exists`() {
         assertFailsWith<FileNotFoundException> {
