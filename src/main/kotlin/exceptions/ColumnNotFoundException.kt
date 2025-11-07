@@ -5,4 +5,6 @@ package exceptions
  *
  * @param columnName Name of the column
  */
-class ColumnNotFoundException(columnName: String) : GeneralExcelException("Column not found! [$columnName]")
+class ColumnNotFoundException(
+    columnName: String,
+) : GeneralExcelException("Column not found! [$columnName]")

@@ -6,14 +6,18 @@ import extensions.asString
  * @param T An [Entity] type
  * @param sheetReference A [SheetReference]
  */
-class DataIterator<T : Entity>(private val sheetReference: SheetReference<T>) : Iterator<T> {
+class DataIterator<T : Entity>(
+    private val sheetReference: SheetReference<T>,
+) : Iterator<T> {
     private var rowIndex = sheetReference.columnNameRowIndex
     private val keyColumnIndex by lazy { sheetReference.getKeyCellIndex() ?: 0 }
 
-    private fun hasNextRow(row: Int): Boolean {
-        return sheetReference.sheet.getRow(row + 1)?.getCell(keyColumnIndex)?.asString()
+    private fun hasNextRow(row: Int): Boolean =
+        sheetReference.sheet
+            .getRow(row + 1)
+            ?.getCell(keyColumnIndex)
+            ?.asString()
             .let { !it.isNullOrBlank() }
-    }
 
     override fun hasNext(): Boolean = hasNextRow(rowIndex)
 

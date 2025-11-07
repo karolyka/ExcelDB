@@ -23,11 +23,10 @@ class Cache {
     ): EntityList = dataCache.getOrPut(kClass, defaultValue)
 
     /** Returns and remove the first element which is not equal to the given [kClass] from the related entities set */
-    fun <T : Entity> popRelatedEntity(kClass: KClass<T>): KClass<Entity>? {
-        return relatedEntities
+    fun <T : Entity> popRelatedEntity(kClass: KClass<T>): KClass<Entity>? =
+        relatedEntities
             .firstOrNull { it != kClass }
             ?.also { relatedEntities.remove(it) }
-    }
 
     /** Adds the [data] value to the cache.
      * The [action] will be executed when there is no cache entry for the class of data */

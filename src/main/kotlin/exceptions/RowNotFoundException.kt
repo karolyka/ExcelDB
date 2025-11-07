@@ -5,4 +5,6 @@ package exceptions
  *
  * @param rowIndex Index of row
  */
-class RowNotFoundException(rowIndex: Int) : GeneralExcelException("Row not found! [$rowIndex]")
+class RowNotFoundException(
+    rowIndex: Int,
+) : GeneralExcelException("Row not found! [$rowIndex]")

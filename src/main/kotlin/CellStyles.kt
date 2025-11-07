@@ -6,9 +6,13 @@ private const val DATE_FORMAT = "yyyy-mm-dd"
 private const val TIME_FORMAT = "hh:MM:ss"
 
 /** This class holds the style related information for a cell and [Workbook] */
-class CellStyles(workbook: Workbook) {
+class CellStyles(
+    workbook: Workbook,
+) {
     /** This enum class represents some date and time related styles */
-    enum class Style(internal val formatString: String) {
+    enum class Style(
+        internal val formatString: String,
+    ) {
         /** Simple date format */
         DATE(DATE_FORMAT),
 
@@ -33,9 +37,8 @@ class CellStyles(workbook: Workbook) {
         workbook: Workbook,
         creationHelper: CreationHelper,
         formatString: String,
-    ): CellStyle {
-        return workbook.createCellStyle().apply {
+    ): CellStyle =
+        workbook.createCellStyle().apply {
             dataFormat = creationHelper.createDataFormat().getFormat(formatString)
         }
-    }
 }

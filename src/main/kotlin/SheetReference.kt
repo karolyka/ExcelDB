@@ -28,7 +28,11 @@ import kotlin.reflect.full.findAnnotation
  * @property sheet  An Excel [Sheet] that contains data
  * @property excelDB An [ExcelDB]
  */
-class SheetReference<T : Entity>(kClass: KClass<T>, val sheet: Sheet, val excelDB: ExcelDB) {
+class SheetReference<T : Entity>(
+    kClass: KClass<T>,
+    val sheet: Sheet,
+    val excelDB: ExcelDB,
+) {
     /** Row index of the column names */
     val columnNameRowIndex: Int = kClass.findAnnotation<annotations.Sheet>()?.firstRowIndex ?: 0
     private val primaryConstructor = kClass.getPrimaryConstructor().validateVisibility(kClass)
@@ -38,7 +42,8 @@ class SheetReference<T : Entity>(kClass: KClass<T>, val sheet: Sheet, val excelD
 
     init {
         val fieldNamesRow =
-            sheet.getRow(columnNameRowIndex)
+            sheet
+                .getRow(columnNameRowIndex)
                 ?.map { FieldMap(it.stringCellValue.normalizeFieldName(), it) }
                 ?: throw RowNotFoundException(columnNameRowIndex)
         fields =
@@ -58,21 +63,24 @@ class SheetReference<T : Entity>(kClass: KClass<T>, val sheet: Sheet, val excelD
             }
     }
 
-    private fun getEntity(row: Row): T {
-        return primaryConstructor.callBy(
-            mappedFields.mapNotNull {
-                val cellValue = row.getCell(it.columnIndex!!)?.let { cell -> it.getValue(cell, excelDB) }
-                if (cellValue != null || it.kParameter.isRequired) {
-                    if (cellValue == null && it.kParameter.type.isMarkedNullable.not()) {
-                        throw NullValueException(it.kParameter.fieldName)
+    private fun getEntity(row: Row): T =
+        primaryConstructor.callBy(
+            mappedFields
+                .mapNotNull {
+                    val cellValue = row.getCell(it.columnIndex!!)?.let { cell -> it.getValue(cell, excelDB) }
+                    if (cellValue != null || it.kParameter.isRequired) {
+                        if (cellValue == null &&
+                            it.kParameter.type.isMarkedNullable
+                                .not()
+                        ) {
+                            throw NullValueException(it.kParameter.fieldName)
+                        }
+                        it.kParameter to cellValue
+                    } else {
+                        null
                     }
-                    it.kParameter to cellValue
-                } else {
-                    null
-                }
-            }.toMap(),
+                }.toMap(),
         )
-    }
 
     /**
      * Get a new [T] instance based on the data contained in the [Row]
@@ -95,7 +103,10 @@ class SheetReference<T : Entity>(kClass: KClass<T>, val sheet: Sheet, val excelD
         }
     }
 
-    private class FieldMap(val fieldName: String, val cell: Cell)
+    private class FieldMap(
+        val fieldName: String,
+        val cell: Cell,
+    )
 }
 
 private fun <R> KFunction<R>.validateVisibility(kClass: KClass<*>): KFunction<R> {

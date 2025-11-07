@@ -23,8 +23,8 @@ private val ZERO_DAY = LocalDate.ofEpochDay(0)
 fun Cell.cellType(): CellType = if (cellType == CellType.FORMULA) cachedFormulaResultType else cellType
 
 /** Get the value of [Cell] as [String]? */
-fun Cell.asString(): String? {
-    return when (cellType()) {
+fun Cell.asString(): String? =
+    when (cellType()) {
         CellType._NONE -> throw UnsupportedCellTypeException()
         CellType.BLANK -> null
         CellType.BOOLEAN -> booleanCellValue.toString()
@@ -33,7 +33,6 @@ fun Cell.asString(): String? {
         CellType.NUMERIC -> numericCellValue.toString()
         CellType.STRING -> stringValue
     }
-}
 
 /** A property for cell, it contains the [Cell.getStringCellValue] as [String]? */
 val Cell.stringValue: String?

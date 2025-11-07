@@ -18,7 +18,10 @@ import kotlin.reflect.jvm.javaType
  * @property kParameter  A parameter
  * @property columnIndex Index of Excel column
  * */
-class ParameterMapper(val kParameter: KParameter, val columnIndex: Int?) {
+class ParameterMapper(
+    val kParameter: KParameter,
+    val columnIndex: Int?,
+) {
     private val kClass by lazy { kParameter.asEntity ?: throw UnsupportedDataTypeException(kParameter.name) }
 
     /** Get a value of cell. The type of value depends on the type of the parameter */

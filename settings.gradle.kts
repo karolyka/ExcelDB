@@ -9,7 +9,7 @@ pluginManagement {
         id("org.jlleitschuh.gradle.ktlint") version ktlintVersion apply false
         id("io.gitlab.arturbosch.detekt") version detektVersion apply false
         id("org.jetbrains.dokka") version dokkaVersion apply false
-        id("org.gradle.toolchains.foojay-resolver-convention") version("0.9.0")
+        id("org.gradle.toolchains.foojay-resolver-convention") version "0.9.0"
     }
 
     repositories {

@@ -16,11 +16,10 @@ import kotlin.reflect.KClass
 fun <T : Entity> Workbook.createSheet(
     kClass: KClass<T>,
     sheetName: String?,
-): Pair<Sheet, List<FieldReference<T>>> {
-    return kClass.getFieldReferences().let { fields ->
+): Pair<Sheet, List<FieldReference<T>>> =
+    kClass.getFieldReferences().let { fields ->
         createSheet(sheetName).apply { createFieldNamesRow(fields) } to fields
     }
-}
 
 /**
  * Remove a sheet when it is exists

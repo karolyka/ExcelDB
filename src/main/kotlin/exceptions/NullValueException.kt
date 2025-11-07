@@ -5,4 +5,6 @@ package exceptions
  *
  * @param columnName Name of the column
  */
-class NullValueException(columnName: String) : GeneralExcelException("Null value does not allowed! [$columnName]")
+class NullValueException(
+    columnName: String,
+) : GeneralExcelException("Null value does not allowed! [$columnName]")

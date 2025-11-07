@@ -5,4 +5,6 @@ package exceptions
  *
  * @param columnNames Name of the columns
  */
-class MultipleKeyColumnException(columnNames: String) : GeneralExcelException("Multiple key columns! [$columnNames]")
+class MultipleKeyColumnException(
+    columnNames: String,
+) : GeneralExcelException("Multiple key columns! [$columnNames]")

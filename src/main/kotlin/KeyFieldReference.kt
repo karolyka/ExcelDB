@@ -8,7 +8,9 @@ import kotlin.reflect.KParameter
  *  @param T      An [Entity]
  *  @param kClass [KClass] of the [Entity]
  *  */
-class KeyFieldReference<T : Entity>(kClass: KClass<T>) {
+class KeyFieldReference<T : Entity>(
+    kClass: KClass<T>,
+) {
     private val keyField: KParameter by lazy { kClass.getKeyField() }
     private val fieldReference: FieldReference<T> by lazy { FieldReference(kClass, keyField) }
 
@@ -16,7 +18,5 @@ class KeyFieldReference<T : Entity>(kClass: KClass<T>) {
     val keyFieldKClass: KClass<*> by lazy { keyField.type.classifier as KClass<*> }
 
     /** Returns the current value of the key field */
-    fun get(receiver: T): Any? {
-        return fieldReference.property.get(receiver)
-    }
+    fun get(receiver: T): Any? = fieldReference.property.get(receiver)
 }

@@ -5,4 +5,6 @@ package exceptions
  *
  * @param columnName Name of the column
  */
-class NonUniqueColumnException(columnName: String) : GeneralExcelException("Non unique columns! [$columnName]")
+class NonUniqueColumnException(
+    columnName: String,
+) : GeneralExcelException("Non unique columns! [$columnName]")

@@ -5,4 +5,6 @@ package exceptions
  *
  * @param value Name of the column
  */
-class KeyNotFoundException(value: String?) : GeneralExcelException("Key not found! [$value]")
+class KeyNotFoundException(
+    value: String?,
+) : GeneralExcelException("Key not found! [$value]")
