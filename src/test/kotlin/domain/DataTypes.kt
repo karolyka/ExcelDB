@@ -17,5 +17,4 @@ data class DataTypes(
     val localDate: LocalDate,
     val localDateTime: LocalDateTime,
     val localTime: LocalTime,
-) :
-    Entity
+) : Entity

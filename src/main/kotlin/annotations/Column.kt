@@ -4,4 +4,6 @@ package annotations
  *
  * @property name      Column name in the Excel sheet
  * */
-annotation class Column(val name: String = "")
+annotation class Column(
+    val name: String = "",
+)

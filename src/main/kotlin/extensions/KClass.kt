@@ -12,9 +12,8 @@ import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.primaryConstructor
 
 /** Returns the primary constructor or throw a [PrimaryConstructorMissing] exception when it doesn't exist */
-fun <T : Entity> KClass<T>.getPrimaryConstructor(): KFunction<T> {
-    return primaryConstructor ?: throw PrimaryConstructorMissing(simpleName)
-}
+@Suppress("detekt:MaxLineLength")
+fun <T : Entity> KClass<T>.getPrimaryConstructor(): KFunction<T> = primaryConstructor ?: throw PrimaryConstructorMissing(simpleName)
 
 /** Returns the field references */
 fun <T : Entity> KClass<T>.getFieldReferences() = getPrimaryConstructor().parameters.map { FieldReference(this, it) }
@@ -32,10 +31,9 @@ fun <T : Entity> KClass<T>.getSheetName(sheetName: String?) =
         ?: simpleName.toString()
 
 /** Returns the key field of a [KClass]<[Entity]> */
-fun <T : Entity> KClass<T>.getKeyField(): KParameter {
-    return with(getPrimaryConstructor().parameters) {
+fun <T : Entity> KClass<T>.getKeyField(): KParameter =
+    with(getPrimaryConstructor().parameters) {
         filter { it.isKeyColumn }.getKeyField()
             ?: filter { it.isIdColumn }.getKeyField()
             ?: throw NoKeyFieldException()
     }
-}

@@ -31,7 +31,10 @@ private const val MIN_WIDTH = 200
  * @param fileMode Type of workbook creating - default: [FileMode.READ]
  */
 @Suppress("TooManyFunctions")
-class ExcelDB(private val fileName: String, private val fileMode: FileMode = FileMode.READ) {
+class ExcelDB(
+    private val fileName: String,
+    private val fileMode: FileMode = FileMode.READ,
+) {
     private companion object {
         private val logger = KotlinLogging.logger {}
     }
@@ -208,14 +211,13 @@ class ExcelDB(private val fileName: String, private val fileMode: FileMode = Fil
     internal fun <T : Entity> findEntity(
         kClass: KClass<T>,
         cell: Cell,
-    ): T? {
-        return cache.getKeyFieldReference(kClass).let { keyField ->
+    ): T? =
+        cache.getKeyFieldReference(kClass).let { keyField ->
             cell.getCellValueAs(keyField.keyFieldKClass)?.let { key ->
                 cache.getEntityOrNull(kClass, key) { getEntityKeyMap(kClass, false) }
                     ?: throw KeyNotFoundException(key.toString())
             }
         }
-    }
 
     private fun <T : Entity> getIterator(
         kClass: KClass<T>,
@@ -223,12 +225,12 @@ class ExcelDB(private val fileName: String, private val fileMode: FileMode = Fil
         createAllowed: Boolean,
     ): DataIterator<T> {
         logger.debug { "Get iterator for [$kClass]" }
-        return cache.sheetNameGetOrPut(kClass, sheetName)
+        return cache
+            .sheetNameGetOrPut(kClass, sheetName)
             .let {
                 workbook.getSheet(it)
                     ?: if (createAllowed) workbook.createSheet(kClass, it).first else throw SheetNotFoundException(it)
-            }
-            .let { DataIterator(SheetReference(kClass, sheet = it, excelDB = this)) }
+            }.let { DataIterator(SheetReference(kClass, sheet = it, excelDB = this)) }
     }
 
     private fun createWorkbook(): XSSFWorkbook {
@@ -241,13 +243,12 @@ class ExcelDB(private val fileName: String, private val fileMode: FileMode = Fil
         return WorkbookFactory.create(FileInputStream(Paths.get(fileName).toFile()))
     }
 
-    private fun readOrCreateWorkbook(): Workbook {
-        return if (File(fileName).exists()) {
+    private fun readOrCreateWorkbook(): Workbook =
+        if (File(fileName).exists()) {
             readWorkbook()
         } else {
             createWorkbook()
         }
-    }
 
     private fun <T : Entity> writeDataToSheet(
         entity: Iterable<T>,
@@ -258,15 +259,17 @@ class ExcelDB(private val fileName: String, private val fileMode: FileMode = Fil
             cache.addEntity(data) { getEntityKeyMap(it, false, worksheet.sheetName) }
             worksheet.createRow(index + 1).let { row ->
                 fields.forEachIndexed { column, fieldReference ->
-                    fieldReference.property.get(data)?.let { value ->
-                        if (fieldReference.isEntity) {
-                            cache.addEntity(value as Entity) { getEntityKeyMap(it, true) }
-                        } else {
-                            value
+                    fieldReference.property
+                        .get(data)
+                        ?.let { value ->
+                            if (fieldReference.isEntity) {
+                                cache.addEntity(value as Entity) { getEntityKeyMap(it, true) }
+                            } else {
+                                value
+                            }
+                        }?.let {
+                            row.createCell(column).setCellValue(it, cellStyles)
                         }
-                    }?.let {
-                        row.createCell(column).setCellValue(it, cellStyles)
-                    }
                 }
             }
         }

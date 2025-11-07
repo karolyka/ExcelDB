@@ -7,5 +7,6 @@ import kotlin.reflect.KClass
  *
  * @param kClassName Name of the class
  */
-class PrimaryConstructorMissing(kClassName: String?) :
-    GeneralExcelException("Primary constructor is missing for $kClassName")
+class PrimaryConstructorMissing(
+    kClassName: String?,
+) : GeneralExcelException("Primary constructor is missing for $kClassName")

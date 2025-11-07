@@ -4,4 +4,6 @@ import Entity
 import annotations.Sheet
 
 @Sheet("CarFactory")
-data class CarFactoryWithNoKeyField(val name: String) : Entity
+data class CarFactoryWithNoKeyField(
+    val name: String,
+) : Entity

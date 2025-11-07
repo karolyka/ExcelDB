@@ -10,5 +10,4 @@ data class BoolAndFormula(
     val stringFormula: String,
     val localDateTime: LocalDateTime,
     val date: Date,
-) :
-    Entity
+) : Entity

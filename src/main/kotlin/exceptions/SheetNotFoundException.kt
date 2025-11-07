@@ -5,4 +5,6 @@ package exceptions
  *
  * @param sheetName Name of the sheet
  */
-class SheetNotFoundException(sheetName: String) : GeneralExcelException("Sheet not found! [$sheetName]")
+class SheetNotFoundException(
+    sheetName: String,
+) : GeneralExcelException("Sheet not found! [$sheetName]")
