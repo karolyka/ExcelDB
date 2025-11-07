@@ -11,8 +11,10 @@ class CellStyles(workbook: Workbook) {
     enum class Style(internal val formatString: String) {
         /** Simple date format */
         DATE(DATE_FORMAT),
+
         /** Simple date and time format */
         DATETIME("$DATE_FORMAT $TIME_FORMAT"),
+
         /** Simple time format */
         TIME(TIME_FORMAT),
     }
