@@ -32,7 +32,7 @@ private const val MIN_WIDTH = 200
  */
 @Suppress("TooManyFunctions")
 class ExcelDB(private val fileName: String, private val fileMode: FileMode = FileMode.READ) {
-    companion object {
+    private companion object {
         private val logger = KotlinLogging.logger {}
     }
 

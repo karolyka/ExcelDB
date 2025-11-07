@@ -9,8 +9,11 @@ private const val TIME_FORMAT = "hh:MM:ss"
 class CellStyles(workbook: Workbook) {
     /** This enum class represents some date and time related styles */
     enum class Style(internal val formatString: String) {
+        /** Simple date format */
         DATE(DATE_FORMAT),
+        /** Simple date and time format */
         DATETIME("$DATE_FORMAT $TIME_FORMAT"),
+        /** Simple time format */
         TIME(TIME_FORMAT),
     }
 
