@@ -17,7 +17,7 @@ open class GeneralExcelException(
     enableSuppression: Boolean = false,
     writableStackTrace: Boolean = true,
 ) : RuntimeException(message, cause, enableSuppression, writableStackTrace) {
-    companion object {
+    private companion object {
         private val logger = KotlinLogging.logger { }
     }
 

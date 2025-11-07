@@ -80,6 +80,11 @@ kotlin {
     jvmToolchain(21)
 }
 
+java {
+    withSourcesJar()
+    toolchain { languageVersion.set(JavaLanguageVersion.of(21)) }
+}
+
 detekt {
     toolVersion = detektVersion
     config.setFrom("config/detekt/detekt.yml")
@@ -110,10 +115,6 @@ val dokkaHtmlJar by tasks.register<Jar>("dokkaHtmlJar") {
     dependsOn(tasks.dokkaHtml)
     from(tasks.dokkaHtml.flatMap { it.outputDirectory })
     archiveClassifier.set("html-doc")
-}
-
-java {
-    withSourcesJar()
 }
 
 publishing {
