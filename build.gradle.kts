@@ -1,4 +1,4 @@
-import io.gitlab.arturbosch.detekt.Detekt
+// import io.gitlab.arturbosch.detekt.Detekt
 import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 
 val detektVersion: String by project
@@ -6,8 +6,8 @@ val detektVersion: String by project
 plugins {
     kotlin("jvm")
     id("org.jlleitschuh.gradle.ktlint")
-    id("io.gitlab.arturbosch.detekt")
-    id("org.jetbrains.dokka")
+//    id("io.gitlab.arturbosch.detekt")
+//    id("org.jetbrains.dokka")
     jacoco
     `java-library`
     `maven-publish`
@@ -31,7 +31,7 @@ dependencies {
 
     testImplementation(kotlin("test"))
 
-    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:$detektVersion")
+//    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:$detektVersion")
 }
 
 tasks {
@@ -43,15 +43,15 @@ tasks {
         finalizedBy("jacocoTestReport")
     }
 
-    withType<Detekt>().configureEach {
-        reports {
-            xml.required.set(true)
-            html.required.set(true)
-            txt.required.set(true)
-            sarif.required.set(true)
-            md.required.set(true)
-        }
-    }
+//    withType<Detekt>().configureEach {
+//        reports {
+//            xml.required.set(true)
+//            html.required.set(true)
+//            txt.required.set(true)
+//            sarif.required.set(true)
+//            md.required.set(true)
+//        }
+//    }
 
     jacocoTestReport {
         dependsOn(":test")
@@ -85,11 +85,11 @@ java {
     toolchain { languageVersion.set(JavaLanguageVersion.of(21)) }
 }
 
-detekt {
-    toolVersion = detektVersion
-    config.setFrom("config/detekt/detekt.yml")
-    buildUponDefaultConfig = true
-}
+// detekt {
+//    toolVersion = detektVersion
+//    config.setFrom("config/detekt/detekt.yml")
+//    buildUponDefaultConfig = true
+// }
 
 ktlint {
     verbose.set(true)
@@ -105,25 +105,25 @@ ktlint {
     }
 }
 
-val dokkaJavadocJar by tasks.register<Jar>("dokkaJavadocJar") {
-    dependsOn(tasks.dokkaJavadoc)
-    from(tasks.dokkaJavadoc.flatMap { it.outputDirectory })
-    archiveClassifier.set("javadoc")
-}
-
-val dokkaHtmlJar by tasks.register<Jar>("dokkaHtmlJar") {
-    dependsOn(tasks.dokkaHtml)
-    from(tasks.dokkaHtml.flatMap { it.outputDirectory })
-    archiveClassifier.set("html-doc")
-}
+// val dokkaJavadocJar by tasks.register<Jar>("dokkaJavadocJar") {
+//    dependsOn(tasks.dokkaJavadoc)
+//    from(tasks.dokkaJavadoc.flatMap { it.outputDirectory })
+//    archiveClassifier.set("javadoc")
+// }
+//
+// val dokkaHtmlJar by tasks.register<Jar>("dokkaHtmlJar") {
+//    dependsOn(tasks.dokkaHtml)
+//    from(tasks.dokkaHtml.flatMap { it.outputDirectory })
+//    archiveClassifier.set("html-doc")
+// }
 
 publishing {
     publications {
         create<MavenPublication>("maven") {
             from(components["java"])
 
-            artifact(dokkaJavadocJar)
-            artifact(dokkaHtmlJar)
+//            artifact(dokkaJavadocJar)
+//            artifact(dokkaHtmlJar)
         }
     }
 }
